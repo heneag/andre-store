@@ -98,8 +98,8 @@ document.getElementById('generarBtn').addEventListener('click', ()=>{
         ctx.drawImage(fondo,0,0,canvas.width,canvas.height);
 
         // Definir tamaño y posición de la imagen
-        const maxH = canvas.height * 0.80;
-        const maxW = canvas.width * 0.80;
+        const maxH = canvas.height * 0.75;
+        const maxW = canvas.width * 0.85;
         const scale = Math.min(maxW / imgProducto.width, maxH / imgProducto.height);
         const w = imgProducto.width * scale;
         const h = imgProducto.height * scale;
@@ -123,22 +123,44 @@ document.getElementById('generarBtn').addEventListener('click', ()=>{
         ctx.drawImage(imgProducto, x, y, w, h);
         ctx.restore();
 
- // Texto talla
-        ctx.fillStyle=coloresTalla[tallaSeleccionada];
-        ctx.font='750 64px Poppins';
-        ctx.shadowColor="rgba(247, 1, 252, 0.71)";
-        ctx.shadowBlur=15;
-        ctx.fillText("Talla "+tallaSeleccionada, canvas.width/2, canvas.height*0.92);
+// Texto talla
+ctx.font = '750 64px Poppins';
+ctx.fillStyle = coloresTalla[tallaSeleccionada];
+ctx.shadowColor = "rgba(247, 1, 252, 0.71)";
+ctx.shadowBlur = 15;
 
-      
-        // Texto código
-        ctx.fillStyle="pink";
-        ctx.font='790 28px Poppins';
-        ctx.textAlign='left';
-        ctx.textBaseline='middle';
-        ctx.shadowColor="rgba(0,0,0,0.0)";
-        ctx.shadowBlur=10;
-        ctx.fillText("Código "+codigo, canvas.width/2, canvas.height*0.85);
+// Medir ancho de la palabra Talla
+let textoTalla = "Talla " + tallaSeleccionada;
+let anchoTalla = ctx.measureText(textoTalla).width;
+
+// Coordenada Y
+let yTexto = canvas.height * 0.92;
+
+// Posición X centrada para la talla
+let xTalla = canvas.width / 2;
+
+// Pintar la talla
+ctx.textAlign = "center";
+ctx.textBaseline = "middle";
+ctx.fillText(textoTalla, xTalla, yTexto);
+
+
+// Texto código
+ctx.font = '790 22px Poppins';
+ctx.fillStyle = "pink";
+ctx.shadowColor = "rgba(0,0,0,0.0)";
+ctx.shadowBlur = 10;
+
+let textoCodigo = "Código " + codigo;
+let anchoCodigo = ctx.measureText(textoCodigo).width;
+
+// Dibujar el código a la izquierda de la talla
+// desplazamos en X hacia la izquierda la mitad del ancho de la talla más un margen
+let xCodigo = xTalla - (anchoTalla / 2) - anchoCodigo - 20; // 20px de separación
+
+ctx.textAlign = "left";
+ctx.textBaseline = "middle";
+ctx.fillText(textoCodigo, xCodigo, yTexto);
        
       }
     }
@@ -172,6 +194,7 @@ document.getElementById('descargarBtn').addEventListener('click', () => {
   Power By ENG
   To Princess DAIDSM
 </html>
+
 
 
 
