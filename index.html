@@ -168,20 +168,20 @@ function dibujarCanvas(imgProducto, fondo){
     ctx.fillText("Talla " + tallaSeleccionada, canvas.width/2, canvas.height*0.92);
 
     // Texto código
-    ctx.font = '790 22px Poppins';
-    ctx.fillStyle = "pink";
-    ctx.shadowColor = "rgba(0,0,0,0.0)";
-    ctx.shadowBlur = 10;
-    let textoCodigo = "Código " + document.getElementById('codigo').value.trim();
-    let anchoTalla = ctx.measureText("Talla " + tallaSeleccionada).width;
-    let anchoCodigo = ctx.measureText(textoCodigo).width;
-    let xCodigo = (canvas.width/2) - (anchoTalla/2) - anchoCodigo - 10; // ajusta -10 o -20 según necesites
+ctx.font = '790 22px Poppins';
+ctx.fillStyle = "pink";
+ctx.shadowColor = "rgba(0,0,0,0.0)";
+ctx.shadowBlur = 10;
+let textoCodigo = "Código " + document.getElementById('codigo').value.trim();
+let anchoTalla = ctx.measureText("Talla " + tallaSeleccionada).width;
+let anchoCodigo = ctx.measureText(textoCodigo).width;
+
+// Ajusta este valor para mover más a la izquierda
+let xCodigo = (canvas.width/2) - (anchoTalla/2) - anchoCodigo - 50; // antes era -20
+ctx.textAlign = "left";
 ctx.fillText(textoCodigo, xCodigo, canvas.height*0.92);
 
-    ctx.textAlign = "left";
-    ctx.fillText(textoCodigo, xCodigo, canvas.height*0.92);
-}
-
+  
 // Descargar imagen
 document.getElementById('descargarBtn').addEventListener('click', () => {
     if (!tallaSeleccionada || !document.getElementById('codigo').value.trim()) {
@@ -204,4 +204,5 @@ document.getElementById('descargarBtn').addEventListener('click', () => {
 
 </body>
 </html>
+
 
