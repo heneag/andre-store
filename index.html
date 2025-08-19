@@ -166,8 +166,7 @@ function dibujarCanvas(imgProducto, fondo){
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     ctx.fillText("Talla " + tallaSeleccionada, canvas.width/2, canvas.height*0.92);
-
-  // Texto código alineado a la izquierda
+// Texto código alineado a la izquierda
 ctx.font = 'bold 22px Poppins';
 ctx.fillStyle = "pink";
 ctx.shadowColor = "rgba(0,0,0,0.0)";
@@ -175,14 +174,8 @@ ctx.shadowBlur = 10;
 
 let textoCodigo = "Código " + document.getElementById('codigo').value.trim();
 ctx.textAlign = "left";           // alineación a la izquierda
-ctx.fillText(textoCodigo, 10, canvas.height*0.92); // 10px desde el borde
-
-
-
-// Ajusta este valor para mover más a la izquierda
-let xCodigo = (canvas.width/2) - (anchoTalla/2) - anchoCodigo - 50; // antes era -20
-ctx.textAlign = "left";
-ctx.fillText(textoCodigo, xCodigo, canvas.height*0.92);
+ctx.textBaseline = "middle";
+ctx.fillText(textoCodigo, 20, canvas.height*0.92); // 20px desde el borde izquierdo
 
   
 // Descargar imagen
@@ -207,6 +200,7 @@ document.getElementById('descargarBtn').addEventListener('click', () => {
 
 </body>
 </html>
+
 
 
 
