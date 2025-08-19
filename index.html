@@ -97,14 +97,13 @@ document.getElementById('generarBtn').addEventListener('click', ()=>{
         ctx.clearRect(0,0,canvas.width,canvas.height);
         ctx.drawImage(fondo,0,0,canvas.width,canvas.height);
 
-        // Definir tamaño y posición de la imagen
-        const maxH = canvas.height * 0.75;
-        const maxW = canvas.width * 0.90;
-        const scale = Math.min(maxW / imgProducto.width, maxH / imgProducto.height);
-        const w = imgProducto.width * scale;
-        const h = imgProducto.height * scale;
-        const x = (canvas.width - w) / 2;
-        const y = (canvas.height * 0.75 - h) / 2 + 30;
+       const maxH = canvas.height * 0.82;   // antes 0.75 → más altura disponible
+const maxW = canvas.width * 0.90;
+const scale = Math.min(maxW / imgProducto.width, maxH / imgProducto.height);
+const w = imgProducto.width * scale;
+const h = imgProducto.height * scale;
+const x = (canvas.width - w) / 2;
+const y = (canvas.height - h) / 2 - 10; // centrado pero un poco más abajo
 
         const radius = 20;
         ctx.save();
@@ -194,6 +193,7 @@ document.getElementById('descargarBtn').addEventListener('click', () => {
   Power By ENG
   To Princess DAIDSM
 </html>
+
 
 
 
