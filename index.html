@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Generador de Publicación Instagram</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;800&display=swap" rel="stylesheet">
+<style>
+  body { font-family:'Poppins',sans-serif; display:flex; flex-direction:column; align-items:center; background:#f0f0f0; margin:0; padding:20px; }
+  .controls { display:flex; flex-direction:column; gap:10px; width:90%; max-width:400px; margin-bottom:20px; background:rgba(255,255,255,0.95); padding:12px; border-radius:12px; box-shadow:0 4px 10px rgba(0,0,0,0.2); }
+  .controls label { display:flex; flex-direction:column; font-weight:600; }
+  .controls input[type="text"], .controls input[type="file"] { margin-top:4px; padding:6px 8px; border-radius:8px; border:1px solid #ccc; font-size:14px; }
+  .preview { width:80px; height:80px; object-fit:cover; border-radius:10px; border:2px solid #ccc; margin-top:5px; display:none; }
+  .size-buttons { display:flex; flex-wrap:wrap; gap:8px; margin-top:5px; justify-content:center; }
+  .size-buttons button { padding:8px 14px; border:none; border-radius:8px; cursor:pointer; background:linear-gradient(45deg,#ff66b2,#66e0ff); color:white; font-weight:bold; transition:transform 0.2s, background 0.3s; flex:1 1 30%; }
+  .size-buttons button:hover { transform:scale(1.05); background:linear-gradient(45deg,#ff3399,#33ccff); }
+  .size-buttons button.active { background:#ff33cc; color:white; }
+  #generarBtn { padding:10px 16px; font-size:16px; border:none; cursor:pointer; border-radius:8px; background:#ff69b4; color:white; font-weight:bold; margin-top:10px; }
+  #generarBtn:hover { background:#ff1493; }
+  canvas { width:90vw; max-width:1080px; aspect-ratio:1/1; border-radius:12px; display:block; border:2px solid #ddd; box-shadow:0 4px 10px rgba(241, 194, 218, 0.8); background:#fff; }
+</style>
+</head>
+<body>
+
+<div class="controls">
+  <label>Subir imagen del producto
+    <input type="file" id="productoInput" accept="image/*">
+  </label>
+  <img id="preview" class="preview" src="#" alt="Vista previa">
+  <label>Código
+    <input type="text" id="codigo" placeholder="Ejemplo: ABC123">
+  </label>
+  <div class="size-buttons">
+    <button onclick="selectSize(this,'S')">S</button>
+    <button onclick="selectSize(this,'M')">M</button>
+    <button onclick="selectSize(this,'L')">L</button>
+    <button onclick="selectSize(this,'XL')">XL</button>
+    <button onclick="selectSize(this,'PLUS')">PLUS</button>
+  </div>
+  <button id="generarBtn">Generar</button>
+</div>
+
+<canvas id="canvas" width="1080" height="1080"></canvas>
+
+<script>
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+const preview = document.getElementById("preview");
+let tallaSeleccionada = "";
+
+// Colores vivos para tallas (sin negro)
+const coloresTalla = { "S":"#FF69B4", "M":"#00CED1", "L":"#FF8C00", "XL":"#1E90FF", "PLUS":"#32CD32" };
+
+// Mostrar preview
+document.getElementById('productoInput').addEventListener("change", e=>{
+  const file = e.target.files[0];
+  if(file){
+    const reader = new FileReader();
+    reader.onload = function(event){
+      preview.src = event.target.result;
+      preview.style.display="block";
+    };
+    reader.readAsDataURL(file);
+  }
+});
+
+// Seleccionar talla
+function selectSize(button,talla){
+  document.querySelectorAll(".size-buttons button").forEach(b=>b.classList.remove("active"));
+  button.classList.add("active");
+  tallaSeleccionada = talla;
+}
+
+// Generar imagen
+document.getElementById('generarBtn').addEventListener('click', ()=>{
+  const fileInput = document.getElementById('productoInput');
+  const codigo = document.getElementById('codigo').value.trim();
+  if(!fileInput.files[0]) { alert("Por favor sube una imagen del producto."); return; }
+  if(!codigo) { alert("Por favor ingresa el código del producto."); return; }
+  if(!tallaSeleccionada) { alert("Por favor selecciona una talla."); return; }
+
+  const productoFile = fileInput.files[0];
+  const readerProducto = new FileReader();
+  readerProducto.onload = function(eProducto){
+    const imgProducto = new Image();
+    imgProducto.onload = function(){
+      const fondo = new Image();
+      fondo.src = './fondo.png';
+      fondo.onload = function(){
+        // Limpiar canvas
+        ctx.clearRect(0,0,canvas.width,canvas.height);
+        ctx.drawImage(fondo,0,0,canvas.width,canvas.height);
+
+      // Definir tamaño y posición de la imagen
+const maxH = canvas.height * 0.75;
+const maxW = canvas.width * 0.80;
+const scale = Math.min(maxW / imgProducto.width, maxH / imgProducto.height);
+const w = imgProducto.width * scale;
+const h = imgProducto.height * scale;
+const x = (canvas.width - w) / 2;
+const y = (canvas.height * 0.75 - h) / 2 + 30;
+
+// Radio de las esquinas
+const radius = 20;
+
+// Crear path con esquinas redondeadas
+ctx.save(); // Guardar estado actual
+ctx.beginPath();
+ctx.moveTo(x + radius, y);
+ctx.lineTo(x + w - radius, y);
+ctx.quadraticCurveTo(x + w, y, x + w, y + radius);
+ctx.lineTo(x + w, y + h - radius);
+ctx.quadraticCurveTo(x + w, y + h, x + w - radius, y + h);
+ctx.lineTo(x + radius, y + h);
+ctx.quadraticCurveTo(x, y + h, x, y + h - radius);
+ctx.lineTo(x, y + radius);
+ctx.quadraticCurveTo(x, y, x + radius, y);
+ctx.closePath();
+
+// Recortar el canvas al path
+ctx.clip();
+
+// Dibujar la imagen
+ctx.drawImage(imgProducto, x, y, w, h);
+
+ctx.restore(); // Restaurar estado para no afectar otros dibujos
+
+
+        // Texto código (más abajo, mejor sombra)
+        ctx.fillStyle="pink";
+        ctx.font='650 48px Poppins';
+        ctx.textAlign='center';
+        ctx.textBaseline='middle';
+        ctx.shadowColor="rgba(0,0,0,0.25)";
+        ctx.shadowBlur=10;
+        ctx.fillText("Código "+codigo, canvas.width/2, canvas.height*0.85);
+
+        // Texto talla (colores vivos)
+        ctx.fillStyle=coloresTalla[tallaSeleccionada];
+        ctx.font='750 64px Poppins';
+        ctx.shadowColor="rgba(0,0,0,0.25)";
+        ctx.shadowBlur=15;
+        ctx.fillText("Talla "+tallaSeleccionada, canvas.width/2, canvas.height*0.92);
+      }
+    }
+    imgProducto.src = eProducto.target.result;
+  };
+  readerProducto.readAsDataURL(productoFile);
+});
+</script>
+
+</body>
+</html>
