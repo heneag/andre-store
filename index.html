@@ -35,12 +35,13 @@
   </label>
 Escoja la Talla
   <div class="size-buttons">
+  <button onclick="selectSize(this,'NINA')">JUVENIL</button>  
+  <button onclick="selectSize(this,'JUVENIL')">JUVENIL</button>
+  <button onclick="selectSize(this,'XS')">XS</button>
   <button onclick="selectSize(this,'S')">S</button>
   <button onclick="selectSize(this,'M')">M</button>
   <button onclick="selectSize(this,'L')">L</button>
   <button onclick="selectSize(this,'XL')">XL</button>
-  <button onclick="selectSize(this,'JUVENIL')">JUVENIL</button>
-  <button onclick="selectSize(this,'XS')">XS</button>
   <button onclick="selectSize(this,'PLUS')">PLUS</button>
   <button onclick="selectSize(this,'PLUS 1X')">PLUS 1X</button>
   <button onclick="selectSize(this,'PLUS 2X')">PLUS 2X</button>
@@ -69,8 +70,9 @@ const coloresTalla = {
   "XS":"#8A2BE2",        // morado vivo
   "PLUS":"#d096f2", 
   "PLUS 1X":"#20B2AA",   // verde azulado
-  "PLUS 2X":"#FFD700",   // dorado
+  "PLUS 2X":"#a3ffe8",   // dorado
   "PLUS 3X":"#FF4500"    // naranja fuerte
+  "NINA":"#e5c8e6", 
 };
 
 
@@ -115,8 +117,8 @@ document.getElementById('generarBtn').addEventListener('click', ()=>{
         ctx.clearRect(0,0,canvas.width,canvas.height);
         ctx.drawImage(fondo,0,0,canvas.width,canvas.height);
 
-       const maxH = canvas.height * 0.80;   // antes 0.75 → más altura disponible
-const maxW = canvas.width * 0.90;
+       const maxH = canvas.height * 0.83;   // antes 0.75 → más altura disponible
+const maxW = canvas.width * 0.93;
 const scale = Math.min(maxW / imgProducto.width, maxH / imgProducto.height);
 const w = imgProducto.width * scale;
 const h = imgProducto.height * scale;
@@ -210,6 +212,7 @@ document.getElementById('descargarBtn').addEventListener('click', () => {
   Power By ENG
   To Princess DAIDSM
 </html>
+
 
 
 
