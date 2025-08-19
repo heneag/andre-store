@@ -33,20 +33,20 @@
   <label>Código
     <input type="text" id="codigo" placeholder="Ejemplo: ABC123">
   </label>
-Escoja la Talla
+  Escoja la Talla
   <div class="size-buttons">
-  <button onclick="selectSize(this,'NINA')">NINA</button>  
-  <button onclick="selectSize(this,'JUVENIL')">JUVENIL</button>
-  <button onclick="selectSize(this,'XS')">XS</button>
-  <button onclick="selectSize(this,'S')">S</button>
-  <button onclick="selectSize(this,'M')">M</button>
-  <button onclick="selectSize(this,'L')">L</button>
-  <button onclick="selectSize(this,'XL')">XL</button>
-  <button onclick="selectSize(this,'PLUS')">PLUS</button>
-  <button onclick="selectSize(this,'PLUS 1X')">PLUS 1X</button>
-  <button onclick="selectSize(this,'PLUS 2X')">PLUS 2X</button>
-  <button onclick="selectSize(this,'PLUS 3X')">PLUS 3X</button>
-</div>
+    <button onclick="selectSize(this,'NINA')">NINA</button>  
+    <button onclick="selectSize(this,'JUVENIL')">JUVENIL</button>
+    <button onclick="selectSize(this,'XS')">XS</button>
+    <button onclick="selectSize(this,'S')">S</button>
+    <button onclick="selectSize(this,'M')">M</button>
+    <button onclick="selectSize(this,'L')">L</button>
+    <button onclick="selectSize(this,'XL')">XL</button>
+    <button onclick="selectSize(this,'PLUS')">PLUS</button>
+    <button onclick="selectSize(this,'PLUS 1X')">PLUS 1X</button>
+    <button onclick="selectSize(this,'PLUS 2X')">PLUS 2X</button>
+    <button onclick="selectSize(this,'PLUS 3X')">PLUS 3X</button>
+  </div>
 
   <button id="generarBtn">Generar Post</button>
   <button id="descargarBtn">Descargar Imagen</button>
@@ -65,15 +65,14 @@ const coloresTalla = {
   "M":"#00CED1", 
   "L":"#FF8C00", 
   "XL":"#1E90FF", 
-  "JUVENIL":"#FF6347",   // rojo/naranja
-  "XS":"#8A2BE2",        // morado vivo
+  "JUVENIL":"#FF6347",
+  "XS":"#8A2BE2",
   "PLUS":"#d096f2", 
-  "PLUS 1X":"#20B2AA",   // verde azulado
-  "PLUS 2X":"#a3ffe8",   // celeste claro
-  "PLUS 3X":"#FF4500",   // naranja fuerte
-  "NINA":"#e5c8e6"       // lila suave
+  "PLUS 1X":"#20B2AA",
+  "PLUS 2X":"#a3ffe8",
+  "PLUS 3X":"#FF4500",
+  "NINA":"#e5c8e6"
 };
-
 
 // Mostrar preview
 document.getElementById('productoInput').addEventListener("change", e=>{
@@ -110,81 +109,76 @@ document.getElementById('generarBtn').addEventListener('click', ()=>{
     imgProducto.onload = function(){
       const fondo = new Image();
       fondo.src = './fondo.png';
-      fondo.onerror = function() { console.warn("No se encontró fondo.png, se usará fondo blanco."); fondo.src=""; };
-      fondo.onload = function(){
-        // Limpiar canvas
-        ctx.clearRect(0,0,canvas.width,canvas.height);
-        ctx.drawImage(fondo,0,0,canvas.width,canvas.height);
 
-       const maxH = canvas.height * 0.83;   // antes 0.75 → más altura disponible
-const maxW = canvas.width * 0.93;
-const scale = Math.min(maxW / imgProducto.width, maxH / imgProducto.height);
-const w = imgProducto.width * scale;
-const h = imgProducto.height * scale;
-const x = (canvas.width - w) / 2;
-const y = (canvas.height * 0.75 - h) / 2 + 50;
-        const radius = 20;
-        ctx.save();
-        ctx.beginPath();
-        ctx.moveTo(x + radius, y);
-        ctx.lineTo(x + w - radius, y);
-        ctx.quadraticCurveTo(x + w, y, x + w, y + radius);
-        ctx.lineTo(x + w, y + h - radius);
-        ctx.quadraticCurveTo(x + w, y + h, x + w - radius, y + h);
-        ctx.lineTo(x + radius, y + h);
-        ctx.quadraticCurveTo(x, y + h, x, y + h - radius);
-        ctx.lineTo(x, y + radius);
-        ctx.quadraticCurveTo(x, y, x + radius, y);
-        ctx.closePath();
-        ctx.clip();
-        ctx.drawImage(imgProducto, x, y, w, h);
-        ctx.restore();
-
-// Texto talla
-ctx.font = '600 64px Poppins';  // redondo, no angular
-ctx.fillStyle = coloresTalla[tallaSeleccionada];
-ctx.shadowColor = "rgba(247, 1, 252, 0.71)";
-ctx.shadowBlur = 15;
-
-// Medir ancho de la palabra Talla
-let textoTalla = "Talla " + tallaSeleccionada;
-let anchoTalla = ctx.measureText(textoTalla).width;
-
-// Coordenada Y
-let yTexto = canvas.height * 0.92;
-
-// Posición X centrada para la talla
-let xTalla = canvas.width / 2;
-
-// Pintar la talla
-ctx.textAlign = "center";
-ctx.textBaseline = "middle";
-ctx.fillText(textoTalla, xTalla, yTexto);
-
-
-// Texto código
-ctx.font = '790 22px Poppins';
-ctx.fillStyle = "pink";
-ctx.shadowColor = "rgba(0,0,0,0.0)";
-ctx.shadowBlur = 10;
-
-let textoCodigo = "Código " + codigo;
-let anchoCodigo = ctx.measureText(textoCodigo).width;
-
-// Dibujar el código a la izquierda de la talla
-// desplazamos en X hacia la izquierda la mitad del ancho de la talla más un margen
-let xCodigo = xTalla - (anchoTalla / 2) - anchoCodigo - 20; // 20px de separación
-
-ctx.textAlign = "left";
-ctx.textBaseline = "middle";
-ctx.fillText(textoCodigo, xCodigo, yTexto);
-       
-      }
-    }
+      fondo.onload = function(){ dibujarCanvas(imgProducto, fondo); }
+      fondo.onerror = function(){ 
+        console.warn("No se pudo cargar fondo.png, se usará fondo blanco.");
+        dibujarCanvas(imgProducto, null);
+      };
+    };
     imgProducto.src = eProducto.target.result;
   };
   readerProducto.readAsDataURL(productoFile);
 });
+
+function dibujarCanvas(imgProducto, fondo){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+
+    // Dibujar fondo
+    if(fondo){
+        ctx.drawImage(fondo,0,0,canvas.width,canvas.height);
+    } else {
+        ctx.fillStyle = "#ffffff";
+        ctx.fillRect(0,0,canvas.width,canvas.height);
+    }
+
+    // Dibujar producto
+    const maxH = canvas.height * 0.83;
+    const maxW = canvas.width * 0.93;
+    const scale = Math.min(maxW / imgProducto.width, maxH / imgProducto.height);
+    const w = imgProducto.width * scale;
+    const h = imgProducto.height * scale;
+    const x = (canvas.width - w) / 2;
+    const y = (canvas.height * 0.75 - h) / 2 + 50;
+
+    const radius = 20;
+    ctx.save();
+    ctx.beginPath();
+    ctx.moveTo(x + radius, y);
+    ctx.lineTo(x + w - radius, y);
+    ctx.quadraticCurveTo(x + w, y, x + w, y + radius);
+    ctx.lineTo(x + w, y + h - radius);
+    ctx.quadraticCurveTo(x + w, y + h, x + w - radius, y + h);
+    ctx.lineTo(x + radius, y + h);
+    ctx.quadraticCurveTo(x, y + h, x, y + h - radius);
+    ctx.lineTo(x, y + radius);
+    ctx.quadraticCurveTo(x, y, x + radius, y);
+    ctx.closePath();
+    ctx.clip();
+    ctx.drawImage(imgProducto, x, y, w, h);
+    ctx.restore();
+
+    // Texto talla
+    ctx.font = '600 64px Poppins';
+    ctx.fillStyle = coloresTalla[tallaSeleccionada];
+    ctx.shadowColor = "rgba(247, 1, 252, 0.71)";
+    ctx.shadowBlur = 15;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText("Talla " + tallaSeleccionada, canvas.width/2, canvas.height*0.92);
+
+    // Texto código
+    ctx.font = '790 22px Poppins';
+    ctx.fillStyle = "pink";
+    ctx.shadowColor = "rgba(0,0,0,0.0)";
+    ctx.shadowBlur = 10;
+    let textoCodigo = "Código " + document.getElementById('codigo').value.trim();
+    let anchoTalla = ctx.measureText("Talla " + tallaSeleccionada).width;
+    let anchoCodigo = ctx.measureText(textoCodigo).width;
+    let xCodigo = (canvas.width/2) - (anchoTalla/2) - anchoCodigo - 20;
+    ctx.textAlign = "left";
+    ctx.fillText(textoCodigo, xCodigo, canvas.height*0.92);
+}
 
 // Descargar imagen
 document.getElementById('descargarBtn').addEventListener('click', () => {
@@ -192,7 +186,6 @@ document.getElementById('descargarBtn').addEventListener('click', () => {
         alert("Primero genera la imagen con código y talla.");
         return;
     }
-
     const codigo = document.getElementById('codigo').value.trim();
     const fecha = new Date();
     const fechaStr = fecha.getFullYear() + 
@@ -208,26 +201,4 @@ document.getElementById('descargarBtn').addEventListener('click', () => {
 </script>
 
 </body>
-  Power By ENG
-  To Princess DAIDSM
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
