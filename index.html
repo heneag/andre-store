@@ -54,7 +54,7 @@ const preview = document.getElementById("preview");
 let tallaSeleccionada = "";
 
 // Colores vivos para tallas (sin negro)
-const coloresTalla = { "S":"#FF69B4", "M":"#00CED1", "L":"#FF8C00", "XL":"#1E90FF", "PLUS":"#32CD32" };
+const coloresTalla = { "S":"#FF69B4", "M":"#00CED1", "L":"#FF8C00", "XL":"#1E90FF", "PLUS":"#d096f2" };
 
 // Mostrar preview
 document.getElementById('productoInput').addEventListener("change", e=>{
@@ -97,13 +97,13 @@ document.getElementById('generarBtn').addEventListener('click', ()=>{
         ctx.clearRect(0,0,canvas.width,canvas.height);
         ctx.drawImage(fondo,0,0,canvas.width,canvas.height);
 
-       const maxH = canvas.height * 0.82;   // antes 0.75 → más altura disponible
+       const maxH = canvas.height * 0.80;   // antes 0.75 → más altura disponible
 const maxW = canvas.width * 0.90;
 const scale = Math.min(maxW / imgProducto.width, maxH / imgProducto.height);
 const w = imgProducto.width * scale;
 const h = imgProducto.height * scale;
 const x = (canvas.width - w) / 2;
-const y = (canvas.height - h) / 2 - 10; // centrado pero un poco más abajo
+const y = (canvas.height - h) / 2 - 05; // centrado pero un poco más abajo
 
         const radius = 20;
         ctx.save();
@@ -193,6 +193,7 @@ document.getElementById('descargarBtn').addEventListener('click', () => {
   Power By ENG
   To Princess DAIDSM
 </html>
+
 
 
 
