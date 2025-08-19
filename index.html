@@ -103,7 +103,7 @@ const scale = Math.min(maxW / imgProducto.width, maxH / imgProducto.height);
 const w = imgProducto.width * scale;
 const h = imgProducto.height * scale;
 const x = (canvas.width - w) / 2;
-const y = (canvas.height - h) / 2 - 05; // centrado pero un poco más abajo
+const y = (canvas.height - h) / 2 - (canvas.height * 0.05);
 
         const radius = 20;
         ctx.save();
@@ -193,6 +193,7 @@ document.getElementById('descargarBtn').addEventListener('click', () => {
   Power By ENG
   To Princess DAIDSM
 </html>
+
 
 
 
