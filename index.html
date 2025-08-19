@@ -147,7 +147,17 @@ ctx.restore(); // Restaurar estado para no afectar otros dibujos
   };
   readerProducto.readAsDataURL(productoFile);
 });
+
+
+  document.getElementById('descargarBtn').addEventListener('click', () => {
+    const link = document.createElement('a');
+    link.download = 'publicacion_instagram.png'; // nombre del archivo
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+});
+
 </script>
 
 </body>
 </html>
+
