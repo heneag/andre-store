@@ -35,12 +35,18 @@
   </label>
 Escoja la Talla
   <div class="size-buttons">
-    <button onclick="selectSize(this,'S')">S</button>
-    <button onclick="selectSize(this,'M')">M</button>
-    <button onclick="selectSize(this,'L')">L</button>
-    <button onclick="selectSize(this,'XL')">XL</button>
-    <button onclick="selectSize(this,'PLUS')">PLUS</button>
-  </div>
+  <button onclick="selectSize(this,'S')">S</button>
+  <button onclick="selectSize(this,'M')">M</button>
+  <button onclick="selectSize(this,'L')">L</button>
+  <button onclick="selectSize(this,'XL')">XL</button>
+  <button onclick="selectSize(this,'JUVENIL')">JUVENIL</button>
+  <button onclick="selectSize(this,'XS')">XS</button>
+  <button onclick="selectSize(this,'PLUS')">PLUS</button>
+  <button onclick="selectSize(this,'PLUS 1X')">PLUS 1X</button>
+  <button onclick="selectSize(this,'PLUS 2X')">PLUS 2X</button>
+  <button onclick="selectSize(this,'PLUS 3X')">PLUS 3X</button>
+</div>
+
   <button id="generarBtn">Generar Post</button>
   <button id="descargarBtn">Descargar Imagen</button>
 </div>
@@ -54,7 +60,19 @@ const preview = document.getElementById("preview");
 let tallaSeleccionada = "";
 
 // Colores vivos para tallas (sin negro)
-const coloresTalla = { "S":"#FF69B4", "M":"#00CED1", "L":"#FF8C00", "XL":"#1E90FF", "PLUS":"#d096f2" };
+const coloresTalla = { 
+  "S":"#FF69B4", 
+  "M":"#00CED1", 
+  "L":"#FF8C00", 
+  "XL":"#1E90FF", 
+  "JUVENIL":"#FF6347",   // rojo/naranja
+  "XS":"#8A2BE2",        // morado vivo
+  "PLUS":"#d096f2", 
+  "PLUS 1X":"#20B2AA",   // verde azulado
+  "PLUS 2X":"#FFD700",   // dorado
+  "PLUS 3X":"#FF4500"    // naranja fuerte
+};
+
 
 // Mostrar preview
 document.getElementById('productoInput').addEventListener("change", e=>{
@@ -103,7 +121,7 @@ const scale = Math.min(maxW / imgProducto.width, maxH / imgProducto.height);
 const w = imgProducto.width * scale;
 const h = imgProducto.height * scale;
 const x = (canvas.width - w) / 2;
-const y = (canvas.height * 0.65 - h) / 2 + 30;
+const y = (canvas.height * 0.75 - h) / 2 + 50;
         const radius = 20;
         ctx.save();
         ctx.beginPath();
@@ -192,6 +210,7 @@ document.getElementById('descargarBtn').addEventListener('click', () => {
   Power By ENG
   To Princess DAIDSM
 </html>
+
 
 
 
