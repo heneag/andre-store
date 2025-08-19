@@ -146,8 +146,20 @@ document.getElementById('generarBtn').addEventListener('click', ()=>{
 
 // Descargar imagen
 document.getElementById('descargarBtn').addEventListener('click', () => {
+    if (!tallaSeleccionada || !document.getElementById('codigo').value.trim()) {
+        alert("Primero genera la imagen con código y talla.");
+        return;
+    }
+
+    const codigo = document.getElementById('codigo').value.trim();
+    const fecha = new Date();
+    const fechaStr = fecha.getFullYear() + 
+                     ('0'+(fecha.getMonth()+1)).slice(-2) + 
+                     ('0'+fecha.getDate()).slice(-2); // YYYYMMDD
+    const nombreArchivo = `${tallaSeleccionada}+${codigo}+${fechaStr}.png`;
+
     const link = document.createElement('a');
-    link.download = 'publicacion_instagram.png';
+    link.download = nombreArchivo;
     link.href = canvas.toDataURL('image/png');
     link.click();
 });
@@ -155,3 +167,4 @@ document.getElementById('descargarBtn').addEventListener('click', () => {
 
 </body>
 </html>
+
