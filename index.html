@@ -61,7 +61,7 @@ const preview = document.getElementById("preview");
 let tallaSeleccionada = "";
 
 const coloresTalla = { 
-  "S":"#FF69B4", 
+  "S":"#f5f2f5", 
   "M":"#00CED1", 
   "L":"#FF8C00", 
   "XL":"#1E90FF", 
@@ -161,7 +161,7 @@ function dibujarCanvas(imgProducto, fondo){
     // Texto talla
     ctx.font = '600 64px Poppins';
     ctx.fillStyle = coloresTalla[tallaSeleccionada];
-    ctx.shadowColor = "rgba(247, 1, 252, 0.71)";
+    ctx.shadowColor = "rgba(0, 0, 0, 0.0)";
     ctx.shadowBlur = 15;
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
@@ -200,3 +200,4 @@ document.getElementById('descargarBtn').addEventListener('click', () => {
 
 </body>
 </html>
+
