@@ -15,8 +15,11 @@
   .size-buttons button { padding:8px 14px; border:none; border-radius:8px; cursor:pointer; background:linear-gradient(45deg,#ff66b2,#66e0ff); color:white; font-weight:bold; transition:transform 0.2s, background 0.3s; flex:1 1 30%; }
   .size-buttons button:hover { transform:scale(1.05); background:linear-gradient(45deg,#ff3399,#33ccff); }
   .size-buttons button.active { background:#ff33cc; color:white; }
-  #generarBtn { padding:10px 16px; font-size:16px; border:none; cursor:pointer; border-radius:8px; background:#ff69b4; color:white; font-weight:bold; margin-top:10px; }
+  #generarBtn, #descargarBtn { padding:10px 16px; font-size:16px; border:none; cursor:pointer; border-radius:8px; font-weight:bold; margin-top:10px; color:white; }
+  #generarBtn { background:#ff69b4; }
   #generarBtn:hover { background:#ff1493; }
+  #descargarBtn { background:#32cd32; }
+  #descargarBtn:hover { background:#28a428; }
   canvas { width:90vw; max-width:1080px; aspect-ratio:1/1; border-radius:12px; display:block; border:2px solid #ddd; box-shadow:0 4px 10px rgba(241, 194, 218, 0.8); background:#fff; }
 </style>
 </head>
@@ -38,6 +41,7 @@
     <button onclick="selectSize(this,'PLUS')">PLUS</button>
   </div>
   <button id="generarBtn">Generar</button>
+  <button id="descargarBtn">Descargar Imagen</button>
 </div>
 
 <canvas id="canvas" width="1080" height="1080"></canvas>
@@ -86,47 +90,39 @@ document.getElementById('generarBtn').addEventListener('click', ()=>{
     imgProducto.onload = function(){
       const fondo = new Image();
       fondo.src = './fondo.png';
+      fondo.onerror = function() { console.warn("No se encontró fondo.png, se usará fondo blanco."); fondo.src=""; };
       fondo.onload = function(){
         // Limpiar canvas
         ctx.clearRect(0,0,canvas.width,canvas.height);
         ctx.drawImage(fondo,0,0,canvas.width,canvas.height);
 
-      // Definir tamaño y posición de la imagen
-const maxH = canvas.height * 0.75;
-const maxW = canvas.width * 0.80;
-const scale = Math.min(maxW / imgProducto.width, maxH / imgProducto.height);
-const w = imgProducto.width * scale;
-const h = imgProducto.height * scale;
-const x = (canvas.width - w) / 2;
-const y = (canvas.height * 0.75 - h) / 2 + 30;
+        // Definir tamaño y posición de la imagen
+        const maxH = canvas.height * 0.75;
+        const maxW = canvas.width * 0.80;
+        const scale = Math.min(maxW / imgProducto.width, maxH / imgProducto.height);
+        const w = imgProducto.width * scale;
+        const h = imgProducto.height * scale;
+        const x = (canvas.width - w) / 2;
+        const y = (canvas.height * 0.75 - h) / 2 + 30;
 
-// Radio de las esquinas
-const radius = 20;
+        const radius = 20;
+        ctx.save();
+        ctx.beginPath();
+        ctx.moveTo(x + radius, y);
+        ctx.lineTo(x + w - radius, y);
+        ctx.quadraticCurveTo(x + w, y, x + w, y + radius);
+        ctx.lineTo(x + w, y + h - radius);
+        ctx.quadraticCurveTo(x + w, y + h, x + w - radius, y + h);
+        ctx.lineTo(x + radius, y + h);
+        ctx.quadraticCurveTo(x, y + h, x, y + h - radius);
+        ctx.lineTo(x, y + radius);
+        ctx.quadraticCurveTo(x, y, x + radius, y);
+        ctx.closePath();
+        ctx.clip();
+        ctx.drawImage(imgProducto, x, y, w, h);
+        ctx.restore();
 
-// Crear path con esquinas redondeadas
-ctx.save(); // Guardar estado actual
-ctx.beginPath();
-ctx.moveTo(x + radius, y);
-ctx.lineTo(x + w - radius, y);
-ctx.quadraticCurveTo(x + w, y, x + w, y + radius);
-ctx.lineTo(x + w, y + h - radius);
-ctx.quadraticCurveTo(x + w, y + h, x + w - radius, y + h);
-ctx.lineTo(x + radius, y + h);
-ctx.quadraticCurveTo(x, y + h, x, y + h - radius);
-ctx.lineTo(x, y + radius);
-ctx.quadraticCurveTo(x, y, x + radius, y);
-ctx.closePath();
-
-// Recortar el canvas al path
-ctx.clip();
-
-// Dibujar la imagen
-ctx.drawImage(imgProducto, x, y, w, h);
-
-ctx.restore(); // Restaurar estado para no afectar otros dibujos
-
-
-        // Texto código (más abajo, mejor sombra)
+        // Texto código
         ctx.fillStyle="pink";
         ctx.font='650 48px Poppins';
         ctx.textAlign='center';
@@ -135,7 +131,7 @@ ctx.restore(); // Restaurar estado para no afectar otros dibujos
         ctx.shadowBlur=10;
         ctx.fillText("Código "+codigo, canvas.width/2, canvas.height*0.85);
 
-        // Texto talla (colores vivos)
+        // Texto talla
         ctx.fillStyle=coloresTalla[tallaSeleccionada];
         ctx.font='750 64px Poppins';
         ctx.shadowColor="rgba(0,0,0,0.25)";
@@ -148,16 +144,14 @@ ctx.restore(); // Restaurar estado para no afectar otros dibujos
   readerProducto.readAsDataURL(productoFile);
 });
 
-
-  document.getElementById('descargarBtn').addEventListener('click', () => {
+// Descargar imagen
+document.getElementById('descargarBtn').addEventListener('click', () => {
     const link = document.createElement('a');
-    link.download = 'publicacion_instagram.png'; // nombre del archivo
+    link.download = 'publicacion_instagram.png';
     link.href = canvas.toDataURL('image/png');
     link.click();
 });
-
 </script>
 
 </body>
 </html>
-
