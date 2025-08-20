@@ -21,6 +21,14 @@
   #descargarBtn { background:#32cd32; }
   #descargarBtn:hover { background:#28a428; }
   canvas { width:90vw; max-width:1080px; aspect-ratio:1/1; border-radius:12px; display:block; border:2px solid #ddd; box-shadow:0 4px 10px rgba(241, 194, 218, 0.8); background:#fff; }
+
+  /* Switch CSS */
+  .switch { position: relative; display: inline-block; width:60px; height:28px; }
+  .switch input { display:none; }
+  .slider { position:absolute; cursor:pointer; top:0; left:0; right:0; bottom:0; background-color:#ccc; transition:0.4s; border-radius:28px; }
+  .slider:before { position:absolute; content:""; height:22px; width:22px; left:3px; bottom:3px; background-color:white; transition:0.4s; border-radius:50%; }
+  input:checked + .slider { background-color:#6666ff; }
+  input:checked + .slider:before { transform:translateX(32px); }
 </style>
 </head>
 <body>
@@ -35,18 +43,27 @@
   </label>
   Escoja la Talla
   <div class="size-buttons">
-    <button onclick="selectSize(this,'NINA')">NINA</button>  
-    <button onclick="selectSize(this,'JUVENIL')">JUVENIL</button>
+    <button onclick="selectSize(this,'Niña')">Niña</button>  
+    <button onclick="selectSize(this,'Juvenil')">Juvenil</button>
     <button onclick="selectSize(this,'XS')">XS</button>
     <button onclick="selectSize(this,'S')">S</button>
     <button onclick="selectSize(this,'M')">M</button>
     <button onclick="selectSize(this,'L')">L</button>
     <button onclick="selectSize(this,'XL')">XL</button>
-    <button onclick="selectSize(this,'PLUS')">PLUS</button>
-    <button onclick="selectSize(this,'PLUS 1X')">PLUS 1X</button>
-    <button onclick="selectSize(this,'PLUS 2X')">PLUS 2X</button>
-    <button onclick="selectSize(this,'PLUS 3X')">PLUS 3X</button>
+    <button onclick="selectSize(this,'Plus')">Plus</button>
+    <button onclick="selectSize(this,'Plus 1X')">Plus 1X</button>
+    <button onclick="selectSize(this,'Plus 2X')">Plus 2X</button>
+    <button onclick="selectSize(this,'Plus 3X')">Plus 3X</button>
   </div>
+
+  <!-- Toggle marco con texto -->
+  <label style="display:flex; align-items:center; gap:10px; margin-top:10px;">
+    <span>Marco</span>
+    <label class="switch">
+      <input type="checkbox" id="toggleMarco" checked>
+      <span class="slider"></span>
+    </label>
+  </label>
 
   <button id="generarBtn">Generar Post</button>
   <button id="descargarBtn">Descargar Imagen</button>
@@ -58,21 +75,8 @@
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
 const preview = document.getElementById("preview");
+const toggleMarco = document.getElementById("toggleMarco");
 let tallaSeleccionada = "";
-
-const coloresTalla = { 
-  "S":"#ffc0ff", 
-  "M":"##fc0ff", 
-  "L":"#fc0ff", 
-  "XL":"#fc0ff", 
-  "JUVENIL":"#fc0ff",
-  "XS":"#fc0ff",
-  "PLUS":"#fc0ff", 
-  "PLUS 1X":"#fc0ff",
-  "PLUS 2X":"#fc0ff",
-  "PLUS 3X":"#fc0ff",
-  "NINA":"#fc0ff"
-};
 
 // Mostrar preview
 document.getElementById('productoInput').addEventListener("change", e=>{
@@ -98,9 +102,7 @@ function selectSize(button,talla){
 document.getElementById('generarBtn').addEventListener('click', ()=>{
   const fileInput = document.getElementById('productoInput');
   const codigo = document.getElementById('codigo').value.trim();
-  if(!fileInput.files[0]) { alert("Por favor sube una imagen del producto."); return; }
-  if(!codigo) { alert("Por favor ingresa el código del producto."); return; }
-  if(!tallaSeleccionada) { alert("Por favor selecciona una talla."); return; }
+  if(!fileInput.files[0] || !codigo || !tallaSeleccionada) return;
 
   const productoFile = fileInput.files[0];
   const readerProducto = new FileReader();
@@ -110,10 +112,7 @@ document.getElementById('generarBtn').addEventListener('click', ()=>{
       const fondo = new Image();
       fondo.src = './fondo.png';
       fondo.onload = function(){ dibujarCanvas(imgProducto, fondo); }
-      fondo.onerror = function(){ 
-        console.warn("No se pudo cargar fondo.png, se usará fondo blanco.");
-        dibujarCanvas(imgProducto, null);
-      };
+      fondo.onerror = function(){ dibujarCanvas(imgProducto, null); }
     };
     imgProducto.src = eProducto.target.result;
   };
@@ -123,7 +122,6 @@ document.getElementById('generarBtn').addEventListener('click', ()=>{
 function dibujarCanvas(imgProducto, fondo){
     ctx.clearRect(0,0,canvas.width,canvas.height);
 
-    // Dibujar fondo
     if(fondo){
         ctx.drawImage(fondo,0,0,canvas.width,canvas.height);
     } else {
@@ -131,16 +129,42 @@ function dibujarCanvas(imgProducto, fondo){
         ctx.fillRect(0,0,canvas.width,canvas.height);
     }
 
-    // Dibujar producto
-    const maxH = canvas.height * 0.83;
-    const maxW = canvas.width * 0.93;
-    const scale = Math.min(maxW / imgProducto.width, maxH / imgProducto.height);
+    // Dimensiones del producto
+    const maxH = canvas.height * 0.97;
+    const maxW = canvas.width * 0.83;
+    const scale = Math.min(maxW / imgProducto.width, maxH / imgProducto.height) * 0.85;
     const w = imgProducto.width * scale;
     const h = imgProducto.height * scale;
     const x = (canvas.width - w) / 2;
-    const y = (canvas.height * 0.75 - h) / 2 + 50;
+    const y = (canvas.height - h) / 2 - canvas.height * 0.07;
 
-    const radius = 20;
+    // --- MARCO BLANCO DETRÁS (si toggle activado) ---
+    if(toggleMarco.checked){
+        const radius = 22;
+        const marco = 14;
+        ctx.save();
+        ctx.fillStyle = "#ffffff";
+        ctx.shadowColor = "rgba(0,0,0,0.2)";
+        ctx.shadowBlur = 26;
+        ctx.shadowOffsetX = 8;
+        ctx.shadowOffsetY = 8;
+        ctx.beginPath();
+        ctx.moveTo(x - marco + radius, y - marco);
+        ctx.lineTo(x + w + marco - radius, y - marco);
+        ctx.quadraticCurveTo(x + w + marco, y - marco, x + w + marco, y - marco + radius);
+        ctx.lineTo(x + w + marco, y + h + marco - radius);
+        ctx.quadraticCurveTo(x + w + marco, y + h + marco, x + w + marco - radius, y + h + marco);
+        ctx.lineTo(x - marco + radius, y + h + marco);
+        ctx.quadraticCurveTo(x - marco, y + h + marco, x - marco, y + h + marco - radius);
+        ctx.lineTo(x - marco, y - marco + radius);
+        ctx.quadraticCurveTo(x - marco, y - marco, x - marco + radius, y - marco);
+        ctx.closePath();
+        ctx.fill();
+        ctx.restore();
+    }
+
+    // Imagen del producto
+    const radius = 22;
     ctx.save();
     ctx.beginPath();
     ctx.moveTo(x + radius, y);
@@ -157,45 +181,45 @@ function dibujarCanvas(imgProducto, fondo){
     ctx.drawImage(imgProducto, x, y, w, h);
     ctx.restore();
 
-    // Texto talla con borde y relleno
+    // Texto talla
     ctx.save();
     ctx.font = '800 65px Poppins';
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
-    ctx.fillStyle = "rgba(255, 170, 255, 1)"; // rosa neutro suave
-    ctx.strokeStyle = "#ffffff"; // borde blanco
-    ctx.lineWidth = 10;
+    const grad = ctx.createLinearGradient(0,0,canvas.width,0);
+    grad.addColorStop(0,"#ffaadf");
+    grad.addColorStop(1,"#e75480");
+    ctx.fillStyle = grad;
+    ctx.strokeStyle = "#ffffff";
+    ctx.lineWidth = 8;
+    ctx.shadowColor = "rgba(0,0,0,0.5)";
+    ctx.shadowBlur = 10;
+    ctx.shadowOffsetX = 4;
+    ctx.shadowOffsetY = 4;
     const textoTalla = "Talla " + tallaSeleccionada;
-    const posX = canvas.width / 2;
-    const posY = canvas.height * 0.92;
-    ctx.strokeText(textoTalla, posX, posY);
-    ctx.fillText(textoTalla, posX, posY);
+    ctx.strokeText(textoTalla, canvas.width/2, canvas.height*0.92);
+    ctx.fillText(textoTalla, canvas.width/2, canvas.height*0.92);
     ctx.restore();
 
     // Texto código
     ctx.save();
-    ctx.font = 'bold 14px Poppins';
-    ctx.fillStyle = "rgba(255,192,255,1)"; // rosa
-    let textoCodigo = "Código " + document.getElementById('codigo').value.trim();
+    ctx.font = 'bold 12px Poppins';
+    ctx.fillStyle = "pink";
     ctx.textAlign = "left";
     ctx.textBaseline = "top";
-    ctx.fillText(textoCodigo, 20, 20);
+    let codigoTexto = document.getElementById('codigo').value.trim();
+    ctx.fillText("Código", 30, 35);
+    ctx.fillText(codigoTexto, 30, 53);
     ctx.restore();
 }
 
 // Descargar imagen
-document.getElementById('descargarBtn').addEventListener('click', () => {
-    if (!tallaSeleccionada || !document.getElementById('codigo').value.trim()) {
-        alert("Primero genera la imagen con código y talla.");
-        return;
-    }
+document.getElementById('descargarBtn').addEventListener('click', ()=>{
+    if (!tallaSeleccionada || !document.getElementById('codigo').value.trim()) return;
     const codigo = document.getElementById('codigo').value.trim();
     const fecha = new Date();
-    const fechaStr = fecha.getFullYear() + 
-                     ('0'+(fecha.getMonth()+1)).slice(-2) + 
-                     ('0'+fecha.getDate()).slice(-2); // YYYYMMDD
+    const fechaStr = fecha.getFullYear() + ('0'+(fecha.getMonth()+1)).slice(-2) + ('0'+fecha.getDate()).slice(-2);
     const nombreArchivo = `${tallaSeleccionada}+${codigo}+${fechaStr}.png`;
-
     const link = document.createElement('a');
     link.download = nombreArchivo;
     link.href = canvas.toDataURL('image/png');
@@ -205,8 +229,3 @@ document.getElementById('descargarBtn').addEventListener('click', () => {
 
 </body>
 </html>
-
-
-
-
-
