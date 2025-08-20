@@ -61,7 +61,7 @@ const preview = document.getElementById("preview");
 let tallaSeleccionada = "";
 
 const coloresTalla = { 
-  "S":"#f5f2f5", 
+  "S":"#FFFFFF", 
   "M":"#00CED1", 
   "L":"#FF8C00", 
   "XL":"#1E90FF", 
@@ -170,7 +170,7 @@ function dibujarCanvas(imgProducto, fondo){
     // Texto código alineado a la izquierda
     ctx.font = 'bold 22px Poppins';
     ctx.fillStyle = "pink";
-    ctx.shadowColor = "rgba(0,0,0,0.0)";
+    ctx.shadowColor = "rgba(216, 27, 96, 0.8)";
     ctx.shadowBlur = 10;
     let textoCodigo = "Código " + document.getElementById('codigo').value.trim();
     ctx.textAlign = "left";
@@ -200,5 +200,6 @@ document.getElementById('descargarBtn').addEventListener('click', () => {
 
 </body>
 </html>
+
 
 
