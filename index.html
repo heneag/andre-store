@@ -15,14 +15,15 @@
   .size-buttons button { padding:8px 14px; border:none; border-radius:8px; cursor:pointer; background:linear-gradient(45deg,#ff66b2,#66e0ff); color:white; font-weight:bold; transition:transform 0.2s, background 0.3s; flex:1 1 30%; }
   .size-buttons button:hover { transform:scale(1.05); background:linear-gradient(45deg,#ff3399,#33ccff); }
   .size-buttons button.active { background:#ff33cc; color:white; }
-  #generarBtn, #descargarBtn { padding:10px 16px; font-size:16px; border:none; cursor:pointer; border-radius:8px; font-weight:bold; margin-top:10px; color:white; }
-  #generarBtn { background:#ff69b4; }
-  #generarBtn:hover { background:#ff1493; }
+  #generarFeedBtn, #generarHistoriaBtn, #descargarBtn { padding:10px 16px; font-size:16px; border:none; cursor:pointer; border-radius:8px; font-weight:bold; margin-top:10px; color:white; }
+  #generarFeedBtn { background:#ff69b4; }
+  #generarFeedBtn:hover { background:#ff1493; }
+  #generarHistoriaBtn { background:#ff7f50; }
+  #generarHistoriaBtn:hover { background:#ff4500; }
   #descargarBtn { background:#32cd32; }
   #descargarBtn:hover { background:#28a428; }
-  canvas { width:90vw; max-width:1080px; aspect-ratio:1/1; border-radius:12px; display:block; border:2px solid #ddd; box-shadow:0 4px 10px rgba(241, 194, 218, 0.8); background:#fff; }
+  canvas { width:90vw; max-width:1080px; border-radius:12px; display:block; border:2px solid #ddd; box-shadow:0 4px 10px rgba(241, 194, 218, 0.8); background:#fff; }
 
-  /* Switch CSS */
   .switch { position: relative; display: inline-block; width:60px; height:28px; }
   .switch input { display:none; }
   .slider { position:absolute; cursor:pointer; top:0; left:0; right:0; bottom:0; background-color:#ccc; transition:0.4s; border-radius:28px; }
@@ -56,7 +57,6 @@
     <button onclick="selectSize(this,'Plus 3X')">Plus 3X</button>
   </div>
 
-  <!-- Toggle marco con texto -->
   <label style="display:flex; align-items:center; gap:10px; margin-top:10px;">
     <span>Marco</span>
     <label class="switch">
@@ -65,7 +65,8 @@
     </label>
   </label>
 
-  <button id="generarBtn">Generar Post</button>
+  <button id="generarFeedBtn">Generar FEDD</button>
+  <button id="generarHistoriaBtn">Generar Para Historia</button>
   <button id="descargarBtn">Descargar Imagen</button>
 </div>
 
@@ -98,50 +99,25 @@ function selectSize(button,talla){
   tallaSeleccionada = talla;
 }
 
-// Generar imagen
-document.getElementById('generarBtn').addEventListener('click', ()=>{
-  const fileInput = document.getElementById('productoInput');
-  const codigo = document.getElementById('codigo').value.trim();
-  if(!fileInput.files[0] || !codigo || !tallaSeleccionada) return;
+// Dibujar producto y textos
+function dibujarProductoTexto(imgProducto){
+    const maxH = canvas.height * 0.90;
+    const maxW = canvas.width * 0.90;
+    let scale = Math.min(maxW / imgProducto.width, maxH / imgProducto.height);
 
-  const productoFile = fileInput.files[0];
-  const readerProducto = new FileReader();
-  readerProducto.onload = function(eProducto){
-    const imgProducto = new Image();
-    imgProducto.onload = function(){
-      const fondo = new Image();
-      fondo.src = './fondo.png';
-      fondo.onload = function(){ dibujarCanvas(imgProducto, fondo); }
-      fondo.onerror = function(){ dibujarCanvas(imgProducto, null); }
-    };
-    imgProducto.src = eProducto.target.result;
-  };
-  readerProducto.readAsDataURL(productoFile);
-});
-
-function dibujarCanvas(imgProducto, fondo){
-    ctx.clearRect(0,0,canvas.width,canvas.height);
-
-    if(fondo){
-        ctx.drawImage(fondo,0,0,canvas.width,canvas.height);
-    } else {
-        ctx.fillStyle = "#ffffff";
-        ctx.fillRect(0,0,canvas.width,canvas.height);
+    // Reducir tamaño si es feed
+    if(canvas.width === 1080 && canvas.height === 1080){
+        scale *= 0.90;
     }
 
-    // Dimensiones del producto
-    const maxH = canvas.height * 0.97;
-    const maxW = canvas.width * 0.83;
-    const scale = Math.min(maxW / imgProducto.width, maxH / imgProducto.height) * 0.85;
     const w = imgProducto.width * scale;
     const h = imgProducto.height * scale;
     const x = (canvas.width - w) / 2;
-    const y = (canvas.height - h) / 2 - canvas.height * 0.07;
+    const y = (canvas.height - h) / 2 - canvas.height * 0.05;
 
-    // --- MARCO BLANCO DETRÁS (si toggle activado) ---
+    // Marco
     if(toggleMarco.checked){
-        const radius = 22;
-        const marco = 14;
+        const radius = 22, marco = 14;
         ctx.save();
         ctx.fillStyle = "#ffffff";
         ctx.shadowColor = "rgba(0,0,0,0.2)";
@@ -163,7 +139,7 @@ function dibujarCanvas(imgProducto, fondo){
         ctx.restore();
     }
 
-    // Imagen del producto
+    // Imagen producto
     const radius = 22;
     ctx.save();
     ctx.beginPath();
@@ -183,7 +159,8 @@ function dibujarCanvas(imgProducto, fondo){
 
     // Texto talla
     ctx.save();
-    ctx.font = '800 65px Poppins';
+    const fontSize = Math.round(canvas.height * 0.06);
+    ctx.font = `800 ${fontSize}px Poppins`;
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     const grad = ctx.createLinearGradient(0,0,canvas.width,0);
@@ -203,19 +180,62 @@ function dibujarCanvas(imgProducto, fondo){
 
     // Texto código
     ctx.save();
-    ctx.font = 'bold 10px Poppins';
+    ctx.font = `bold ${Math.round(canvas.height*0.012)}px Poppins`;
     ctx.fillStyle = "pink";
     ctx.textAlign = "left";
     ctx.textBaseline = "top";
     let codigoTexto = document.getElementById('codigo').value.trim();
     ctx.fillText("Código", 30, 35);
-    ctx.fillText(codigoTexto, 30, 53);
+    ctx.fillText(codigoTexto, 30, 35 + Math.round(canvas.height*0.018));
     ctx.restore();
 }
 
+// Dibujar canvas con fondo
+function dibujarCanvas(imgProducto, fondoSrc, width, height){
+    canvas.width = width;
+    canvas.height = height;
+    const fondo = new Image();
+    fondo.src = fondoSrc;
+    fondo.onload = function(){
+        ctx.drawImage(fondo,0,0,canvas.width,canvas.height);
+        dibujarProductoTexto(imgProducto);
+    };
+    fondo.onerror = function(){
+        ctx.fillStyle = "#ffffff";
+        ctx.fillRect(0,0,canvas.width,canvas.height);
+        dibujarProductoTexto(imgProducto);
+    };
+}
+
+// Generar Feed
+document.getElementById('generarFeedBtn').addEventListener('click', ()=>{
+    const fileInput = document.getElementById('productoInput');
+    if(!fileInput.files[0] || !tallaSeleccionada || !document.getElementById('codigo').value.trim()) return;
+    const reader = new FileReader();
+    reader.onload = function(e){
+        const img = new Image();
+        img.onload = function(){ dibujarCanvas(img,'./fondo.png',1080,1080); }
+        img.src = e.target.result;
+    };
+    reader.readAsDataURL(fileInput.files[0]);
+});
+
+// Generar Historia
+document.getElementById('generarHistoriaBtn').addEventListener('click', ()=>{
+    const fileInput = document.getElementById('productoInput');
+    if(!fileInput.files[0] || !tallaSeleccionada || !document.getElementById('codigo').value.trim()) return;
+    const reader = new FileReader();
+    reader.onload = function(e){
+        const img = new Image();
+        img.onload = function(){ dibujarCanvas(img,'./fondo2.png',1080,1920); }
+        img.src = e.target.result;
+    };
+    reader.readAsDataURL(fileInput.files[0]);
+});
+
 // Descargar imagen
 document.getElementById('descargarBtn').addEventListener('click', ()=>{
-    if (!tallaSeleccionada || !document.getElementById('codigo').value.trim()) return;
+    if(!tallaSeleccionada || !document.getElementById('codigo').value.trim()) return;
     const codigo = document.getElementById('codigo').value.trim();
     const fecha = new Date();
     const fechaStr = fecha.getFullYear() + ('0'+(fecha.getMonth()+1)).slice(-2) + ('0'+fecha.getDate()).slice(-2);
@@ -229,4 +249,3 @@ document.getElementById('descargarBtn').addEventListener('click', ()=>{
 
 </body>
 </html>
-
