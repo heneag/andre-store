@@ -161,14 +161,14 @@ function dibujarCanvas(imgProducto, fondo){
     // Texto talla
     ctx.font = '600 64px Poppins';
     ctx.fillStyle = coloresTalla[tallaSeleccionada];
-    ctx.fillStyle = "rgba(255, 192, 255, 1)";
+    ctx.fillStyle = "rgba(255, 255, 255, 1)";
     ctx.shadowBlur = 15;
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     ctx.fillText("Talla " + tallaSeleccionada, canvas.width/2, canvas.height*0.92);
 
     // Texto código en esquina superior izquierda
-ctx.font = 'bold 22px Poppins';
+ctx.font = 'bold 18px Poppins';
 ctx.fillStyle = "pink";
 ctx.shadowColor = "rgba(0, 0, 0, 0)";
 ctx.shadowBlur = 10;
@@ -200,6 +200,7 @@ document.getElementById('descargarBtn').addEventListener('click', () => {
 
 </body>
 </html>
+
 
 
 
