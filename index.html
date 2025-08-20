@@ -61,17 +61,17 @@ const preview = document.getElementById("preview");
 let tallaSeleccionada = "";
 
 const coloresTalla = { 
-  "S":"#E91E63", 
-  "M":"#00CED1", 
-  "L":"#FF8C00", 
-  "XL":"#1E90FF", 
-  "JUVENIL":"#FF6347",
-  "XS":"#8A2BE2",
-  "PLUS":"#d096f2", 
-  "PLUS 1X":"#20B2AA",
-  "PLUS 2X":"#a3ffe8",
-  "PLUS 3X":"#FF4500",
-  "NINA":"#e5c8e6"
+  "S":"#ffc0ff", 
+  "M":"##fc0ff", 
+  "L":"#fc0ff", 
+  "XL":"#fc0ff", 
+  "JUVENIL":"#fc0ff",
+  "XS":"#fc0ff",
+  "PLUS":"#fc0ff", 
+  "PLUS 1X":"#fc0ff",
+  "PLUS 2X":"#fc0ff",
+  "PLUS 3X":"#fc0ff",
+  "NINA":"#fc0ff"
 };
 
 // Mostrar preview
@@ -159,10 +159,10 @@ function dibujarCanvas(imgProducto, fondo){
 
     // Texto talla con borde y relleno
     ctx.save();
-    ctx.font = '800 80px Poppins';
+    ctx.font = '800 30px Poppins';
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
-    ctx.fillStyle = "#e75480"; // rosa neutro suave
+    ctx.fillStyle = "#fc0ff"; // rosa neutro suave
     ctx.strokeStyle = "#ffffff"; // borde blanco
     ctx.lineWidth = 8;
     const textoTalla = "Talla " + tallaSeleccionada;
@@ -176,8 +176,6 @@ function dibujarCanvas(imgProducto, fondo){
     ctx.save();
     ctx.font = 'bold 14px Poppins';
     ctx.fillStyle = "rgba(255,192,255,1)"; // rosa
-    ctx.shadowColor = "rgba(0, 0, 0, 0.2)";
-    ctx.shadowBlur = 10;
     let textoCodigo = "Código " + document.getElementById('codigo').value.trim();
     ctx.textAlign = "left";
     ctx.textBaseline = "top";
@@ -207,3 +205,4 @@ document.getElementById('descargarBtn').addEventListener('click', () => {
 
 </body>
 </html>
+
