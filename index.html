@@ -159,12 +159,12 @@ function dibujarCanvas(imgProducto, fondo){
 
     // Texto talla con borde y relleno
     ctx.save();
-    ctx.font = '800 30px Poppins';
+    ctx.font = '800 50px Poppins';
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
-    ctx.fillStyle = "#fc0ff"; // rosa neutro suave
-    ctx.strokeStyle = "#ffffff"; // borde blanco
-    ctx.lineWidth = 8;
+    ctx.fillStyle = "rgba(255, 170, 255, 1)"; // rosa neutro suave
+    ctx.strokeStyle = "#000"; // borde blanco
+    ctx.lineWidth = 10;
     const textoTalla = "Talla " + tallaSeleccionada;
     const posX = canvas.width / 2;
     const posY = canvas.height * 0.92;
@@ -205,4 +205,5 @@ document.getElementById('descargarBtn').addEventListener('click', () => {
 
 </body>
 </html>
+
 
