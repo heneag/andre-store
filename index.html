@@ -61,7 +61,7 @@ const preview = document.getElementById("preview");
 let tallaSeleccionada = "";
 
 const coloresTalla = { 
-  "S":"#FFFFFF", 
+  "S":"#E91E63", 
   "M":"#00CED1", 
   "L":"#FF8C00", 
   "XL":"#1E90FF", 
@@ -161,21 +161,21 @@ function dibujarCanvas(imgProducto, fondo){
     // Texto talla
     ctx.font = '600 64px Poppins';
     ctx.fillStyle = coloresTalla[tallaSeleccionada];
-    ctx.shadowColor = "rgba(216, 27, 96, 0.8)";
+    ctx.shadowColor = "rgba(50, 50, 50, 0.7)";
     ctx.shadowBlur = 15;
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     ctx.fillText("Talla " + tallaSeleccionada, canvas.width/2, canvas.height*0.92);
 
-    // Texto código alineado a la izquierda
-    ctx.font = 'bold 22px Poppins';
-    ctx.fillStyle = "pink";
-    ctx.shadowColor = "rgba(0, 0, 0, 0)";
-    ctx.shadowBlur = 10;
-    let textoCodigo = "Código " + document.getElementById('codigo').value.trim();
-    ctx.textAlign = "left";
-    ctx.textBaseline = "middle";
-    ctx.fillText(textoCodigo, 20, canvas.height*0.92);
+    // Texto código en esquina superior izquierda
+ctx.font = 'bold 22px Poppins';
+ctx.fillStyle = "pink";
+ctx.shadowColor = "rgba(0, 0, 0, 0)";
+ctx.shadowBlur = 10;
+let textoCodigo = "Código " + document.getElementById('codigo').value.trim();
+ctx.textAlign = "left";     // alinear a la izquierda
+ctx.textBaseline = "top";   // alinear con la parte superior
+ctx.fillText(textoCodigo, 20, 20); // coordenadas esquina sup. izq.
 }
 
 // Descargar imagen
@@ -200,6 +200,7 @@ document.getElementById('descargarBtn').addEventListener('click', () => {
 
 </body>
 </html>
+
 
 
 
