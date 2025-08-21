@@ -449,7 +449,7 @@ function selectSize(button,talla){
 
 /* Dibujo de producto + textos */
 function dibujarProductoTexto(ctx, canvas, imgProducto){
-  const maxH = canvas.height * 0.87;
+  const maxH = canvas.height * 0.85;
   const maxW = canvas.width * 0.87;
   let scale = Math.min(maxW / imgProducto.width, maxH / imgProducto.height);
 
@@ -615,11 +615,11 @@ document.getElementById('generarAmbosBtn').addEventListener('click', generarAmbo
 document.getElementById('descargarFeedBtn').addEventListener('click', descargarFeed);
 document.getElementById('descargarHistoriaBtn').addEventListener('click', descargarHistoria);
 </script>
-<footer 
-<br>
-    &copy; 2025 Todos los derechos reservados. <br>
-Powered and developed by <strong>ENG</strong> for <strong>DAIDSM</strong>
-    </strong>
+<footer>
+    <small>
+        &copy; 2025 Todos los derechos reservados. <br>
+        Powered and developed by <strong>ENG</strong> for <strong>DAIDSM</strong>
+    </small>
 </footer>
 </body>
 
