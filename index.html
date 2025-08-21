@@ -449,11 +449,11 @@ function selectSize(button,talla){
 
 /* Dibujo de producto + textos */
 function dibujarProductoTexto(ctx, canvas, imgProducto){
-  const maxH = canvas.height * 0.90;
-  const maxW = canvas.width * 0.90;
+  const maxH = canvas.height * 0.91;
+  const maxW = canvas.width * 0.91;
   let scale = Math.min(maxW / imgProducto.width, maxH / imgProducto.height);
 
-  if(canvas.width === 1080 && canvas.height === 1080){ scale *= 0.90; }
+  if(canvas.width === 1080 && canvas.height === 1080){ scale *= 0.91; }
 
   const w = imgProducto.width * scale;
   const h = imgProducto.height * scale;
@@ -624,4 +624,5 @@ document.getElementById('descargarHistoriaBtn').addEventListener('click', descar
 </body>
 
 </html>
+
 
