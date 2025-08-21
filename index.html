@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -318,11 +319,66 @@ canvas { border-radius:12px; border:2px solid #eee; box-shadow:0 6px 14px rgba(2
   background-color: #f5f5f5; /* Fondo suave para que se vea la imagen completa */
   padding: 5px;               /* Espacio interno para que no toque los bordes */
 }
+
+/* --- ZOOM SLIDER --- */
+.zoom-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 12px;
+    margin-bottom: 12px;
+    width: 100%;
+    max-width: 320px;
+    margin-left: auto;
+    margin-right: auto;
+}
+.zoom-container label {
+    font-weight: 600;
+    color: #555;
+    font-size: 15px;
+}
+.zoom-container input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 8px;
+    background: #ddd;
+    outline: none;
+    opacity: 0.9;
+    transition: opacity .2s;
+    border-radius: 8px;
+}
+.zoom-container input[type="range"]:hover {
+    opacity: 1;
+}
+.zoom-container input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    background: var(--rosa-principal);
+    cursor: pointer;
+    border-radius: 50%;
+}
+.zoom-container input[type="range"]::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    background: var(--rosa-principal);
+    cursor: pointer;
+    border-radius: 50%;
+    border: none;
+}
+.zoom-container span {
+    font-weight: 600;
+    font-size: 14px;
+    min-width: 45px;
+    text-align: right;
+}
 </style>
 </head>
 <body>
 
-<!-- LOGIN -->
 <div id="login" class="pantalla h1">
   <img src="inicio.png" alt="Inicio" class="login-img">
   <h2>Bienvenida a la App de AndreStore</h2>
@@ -332,12 +388,9 @@ canvas { border-radius:12px; border:2px solid #eee; box-shadow:0 6px 14px rgba(2
   <p id="error" style="color:#d63031; display:none; margin-top:10px;">Usuario o contraseña incorrectos</p>
 </div>
 
-<!-- APP -->
 <div id="app" class="pantalla" style="max-width:1100px;">
   <h1 style="text-align:center;">Generador de Feed & Historia</h1>
-<div style="height:30px;"></div> <!-- separador -->
-
-  <div class="image-upload-container">
+<div style="height:30px;"></div> <div class="image-upload-container">
   <label for="productoInput" class="custom-file-label">
     Selecciona una imagen
     <input type="file" id="productoInput" accept="image/*">
@@ -375,28 +428,35 @@ canvas { border-radius:12px; border:2px solid #eee; box-shadow:0 6px 14px rgba(2
   </div>
 <br>
    <div class="acciones">
-  <!-- Botón para generar ambos -->
   <div class="fila-actions">
     <button id="generarAmbosBtn">Generar Feed + Historia</button>
   </div>
   
-  <!-- Contenedor del Feed -->
   <div id="contenedorFeed" class="contenedor-canvas">
     <div style="font-family: 'Poppins', sans-serif; color: #54f983; font-weight: 400; text-align: center; font-size: 1.5rem;">
   Feed
 </div>
     <canvas id="canvasFeed" width="1080" height="1080"></canvas>
+    <div class="zoom-container">
+        <label for="zoomFeed">Zoom:</label>
+        <input type="range" id="zoomFeed" min="0.5" max="2.5" value="1" step="0.05">
+        <span id="zoomFeedValue">100%</span>
+    </div>
     <div class="fila-actions">
       <button id="descargarFeedBtn">Descargar Feed</button>
     </div>
   </div>
   
-  <!-- Contenedor de la Historia -->
   <div id="contenedorHistoria" class="contenedor-canvas">
    <div style="font-family: 'Poppins', sans-serif; color: #e98e1e; font-weight: 400; text-align: center; font-size: 1.5rem;">
   Historia
 </div>
     <canvas id="canvasHistoria" width="1080" height="1920"></canvas>
+    <div class="zoom-container">
+        <label for="zoomHistoria">Zoom:</label>
+        <input type="range" id="zoomHistoria" min="0.5" max="2.5" value="1" step="0.05">
+        <span id="zoomHistoriaValue">100%</span>
+    </div>
     <div class="fila-actions">
       <button id="descargarHistoriaBtn">Descargar Historia</button>
     </div>
@@ -412,8 +472,8 @@ function login(){
   const pass = document.getElementById("clave").value.trim();
   const error = document.getElementById("error");
 
-  const USUARIO = "Princesa";
-  const CLAVE = "mia";
+  const USUARIO = "";
+  const CLAVE = "";
 
   if(user === USUARIO && pass === CLAVE){
     document.getElementById("login").style.display = "none";
@@ -423,11 +483,15 @@ function login(){
   }
 }
 
-/* Preview de imagen */
+/* Variables Globales */
 const preview = document.getElementById("preview");
 const toggleMarco = document.getElementById("toggleMarco");
 let tallaSeleccionada = "";
+let currentImage = null; // Para guardar la imagen cargada
+let zoomFeed = 1;
+let zoomHistoria = 1;
 
+/* Preview de imagen */
 document.getElementById('productoInput').addEventListener("change", e=>{
   const file = e.target.files[0];
   if(file){
@@ -448,12 +512,14 @@ function selectSize(button,talla){
 }
 
 /* Dibujo de producto + textos */
-function dibujarProductoTexto(ctx, canvas, imgProducto){
-  const maxH = canvas.height * 0.91;
-  const maxW = canvas.width * 0.91;
+function dibujarProductoTexto(ctx, canvas, imgProducto, zoom = 1){
+  const maxH = canvas.height * 0.90;
+  const maxW = canvas.width * 0.90;
   let scale = Math.min(maxW / imgProducto.width, maxH / imgProducto.height);
+  
+  scale *= zoom; // Aplicar el zoom
 
-  if(canvas.width === 1080 && canvas.height === 1080){ scale *= 0.91; }
+  if(canvas.width === 1080 && canvas.height === 1080){ scale *= 0.90; }
 
   const w = imgProducto.width * scale;
   const h = imgProducto.height * scale;
@@ -536,19 +602,19 @@ function dibujarProductoTexto(ctx, canvas, imgProducto){
 }
 
 /* Dibuja fondo + contenido */
-function dibujarCanvas(ctx, canvas, imgProducto, fondoSrc, width, height){
+function dibujarCanvas(ctx, canvas, imgProducto, fondoSrc, width, height, zoom = 1){
   canvas.width = width;
   canvas.height = height;
   const fondo = new Image();
   fondo.src = fondoSrc;
   fondo.onload = ()=> {
     ctx.drawImage(fondo,0,0,canvas.width,canvas.height);
-    dibujarProductoTexto(ctx, canvas, imgProducto);
+    dibujarProductoTexto(ctx, canvas, imgProducto, zoom);
   };
   fondo.onerror = ()=> {
     ctx.fillStyle = "#ffffff";
     ctx.fillRect(0,0,canvas.width,canvas.height);
-    dibujarProductoTexto(ctx, canvas, imgProducto);
+    dibujarProductoTexto(ctx, canvas, imgProducto, zoom);
   };
 }
 
@@ -563,20 +629,30 @@ function validarCampos(){
 /* Generar ambos (Feed + Historia) */
 function generarAmbos(){
   if(!validarCampos()) return;
+
+  // Resetear sliders y zoom
+  document.getElementById('zoomFeed').value = 1;
+  document.getElementById('zoomHistoria').value = 1;
+  document.getElementById('zoomFeedValue').innerText = '100%';
+  document.getElementById('zoomHistoriaValue').innerText = '100%';
+  zoomFeed = 1;
+  zoomHistoria = 1;
+
   const fileInput = document.getElementById('productoInput');
   const reader = new FileReader();
   reader.onload = e=>{
     const img = new Image();
     img.onload = ()=> {
+      currentImage = img; // Guardar la imagen en la variable global
       dibujarCanvas(
         document.getElementById('canvasFeed').getContext('2d'),
         document.getElementById('canvasFeed'),
-        img, './fondo.png',1080,1080
+        img, './fondo.png',1080,1080, zoomFeed
       );
       dibujarCanvas(
         document.getElementById('canvasHistoria').getContext('2d'),
         document.getElementById('canvasHistoria'),
-        img, './fondo2.png',1080,1920
+        img, './fondo2.png',1080,1920, zoomHistoria
       );
     };
     img.src = e.target.result;
@@ -614,6 +690,37 @@ function descargarHistoria(){
 document.getElementById('generarAmbosBtn').addEventListener('click', generarAmbos);
 document.getElementById('descargarFeedBtn').addEventListener('click', descargarFeed);
 document.getElementById('descargarHistoriaBtn').addEventListener('click', descargarHistoria);
+
+/* Listeners para Sliders de Zoom */
+const zoomFeedSlider = document.getElementById('zoomFeed');
+const zoomFeedValue = document.getElementById('zoomFeedValue');
+const zoomHistoriaSlider = document.getElementById('zoomHistoria');
+const zoomHistoriaValue = document.getElementById('zoomHistoriaValue');
+
+zoomFeedSlider.addEventListener('input', (e) => {
+  zoomFeed = parseFloat(e.target.value);
+  zoomFeedValue.innerText = `${Math.round(zoomFeed * 100)}%`;
+  if (currentImage) {
+    dibujarCanvas(
+      document.getElementById('canvasFeed').getContext('2d'),
+      document.getElementById('canvasFeed'),
+      currentImage, './fondo.png', 1080, 1080, zoomFeed
+    );
+  }
+});
+
+zoomHistoriaSlider.addEventListener('input', (e) => {
+  zoomHistoria = parseFloat(e.target.value);
+  zoomHistoriaValue.innerText = `${Math.round(zoomHistoria * 100)}%`;
+  if (currentImage) {
+    dibujarCanvas(
+      document.getElementById('canvasHistoria').getContext('2d'),
+      document.getElementById('canvasHistoria'),
+      currentImage, './fondo2.png', 1080, 1920, zoomHistoria
+    );
+  }
+});
+
 </script>
 <footer>
     <small>
@@ -624,5 +731,4 @@ document.getElementById('descargarHistoriaBtn').addEventListener('click', descar
 </body>
 
 </html>
-
-
+```
