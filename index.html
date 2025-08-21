@@ -334,7 +334,8 @@ canvas { border-radius:12px; border:2px solid #eee; box-shadow:0 6px 14px rgba(2
 
 <!-- APP -->
 <div id="app" class="pantalla" style="max-width:1100px;">
-  <h1 style="margin-bottom:10px;">Generado de Feed & Historia</h1>
+  <h1 style="text-align:center;">Generador de Feed & Historia</h1>
+<div style="height:30px;"></div> <!-- separador -->
 
   <div class="image-upload-container">
   <label for="productoInput" class="custom-file-label">
@@ -371,18 +372,34 @@ canvas { border-radius:12px; border:2px solid #eee; box-shadow:0 6px 14px rgba(2
     <input type="checkbox" id="toggleMarco" checked>
     <span class="slider"></span>
   </label>
-</div>
+  </div>
 <br>
+   <div class="acciones">
+  <!-- Botón para generar ambos -->
+  <div class="fila-actions">
+    <button id="generarAmbosBtn">Generar Feed + Historia</button>
+  </div>
+  
+  <!-- Contenedor del Feed -->
+  <div id="contenedorFeed" class="contenedor-canvas">
+    <div style="font-family: 'Poppins', sans-serif; color: #54f983; font-weight: 400; text-align: center; font-size: 1.5rem;">
+  Feed
+</div>
+    <canvas id="canvasFeed" width="1080" height="1080"></canvas>
     <div class="fila-actions">
-      <button id="generarAmbosBtn">Generar Feed + Historia</button>
       <button id="descargarFeedBtn">Descargar Feed</button>
-      <button id="descargarHistoriaBtn">Descargar Historia</button>
     </div>
   </div>
-
-  <div id="contenedorCanvases">
-    <canvas id="canvasFeed" width="1080" height="1080"></canvas>
+  
+  <!-- Contenedor de la Historia -->
+  <div id="contenedorHistoria" class="contenedor-canvas">
+   <div style="font-family: 'Poppins', sans-serif; color: #e98e1e; font-weight: 400; text-align: center; font-size: 1.5rem;">
+  Historia
+</div>
     <canvas id="canvasHistoria" width="1080" height="1920"></canvas>
+    <div class="fila-actions">
+      <button id="descargarHistoriaBtn">Descargar Historia</button>
+    </div>
   </div>
 </div>
 
@@ -598,6 +615,12 @@ document.getElementById('generarAmbosBtn').addEventListener('click', generarAmbo
 document.getElementById('descargarFeedBtn').addEventListener('click', descargarFeed);
 document.getElementById('descargarHistoriaBtn').addEventListener('click', descargarHistoria);
 </script>
-
+<footer 
+<br>
+    &copy; 2025 Todos los derechos reservados. <br>
+Powered and developed by <strong>ENG</strong> for <strong>DAIDSM</strong>
+    </strong>
+</footer>
 </body>
+
 </html>
