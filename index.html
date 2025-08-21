@@ -449,8 +449,8 @@ function selectSize(button,talla){
 
 /* Dibujo de producto + textos */
 function dibujarProductoTexto(ctx, canvas, imgProducto){
-  const maxH = canvas.height * 0.84;
-  const maxW = canvas.width * 0.84;
+  const maxH = canvas.height * 0.90;
+  const maxW = canvas.width * 0.90;
   let scale = Math.min(maxW / imgProducto.width, maxH / imgProducto.height);
 
   if(canvas.width === 1080 && canvas.height === 1080){ scale *= 0.90; }
@@ -624,3 +624,4 @@ document.getElementById('descargarHistoriaBtn').addEventListener('click', descar
 </body>
 
 </html>
+
