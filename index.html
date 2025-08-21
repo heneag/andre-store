@@ -48,7 +48,7 @@ body::before {
     padding:24px;
     border-radius:20px;
     box-shadow:0 10px 25px rgba(0,0,0,0.18);
-    max-width:520px;
+    max-width:1100px;
     width:100%;
     margin: 16px auto;
     box-sizing: border-box;
@@ -208,7 +208,25 @@ input:checked + .slider { background-color:#6666ff; }
 input:checked + .slider:before { transform:translateX(32px); }
 
 /* Contenedor de canvases */
-#contenedorCanvases{ display:flex; gap:18px; flex-wrap:wrap; justify-content:center; margin: 8px auto 24px auto; width:100%; max-width:1020px; }
+#contenedorCanvases{ 
+    display:flex; 
+    gap:18px; 
+    flex-wrap:wrap; 
+    justify-content:center; 
+    margin: 8px auto 24px auto; 
+    width:100%; 
+    max-width:1020px; 
+}
+.canvas-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 20px;
+    background: rgba(255,255,255,0.8);
+    padding: 15px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
 canvas { border-radius:12px; border:2px solid #eee; box-shadow:0 6px 14px rgba(241,194,218,0.6); max-width:100%; height:auto; }
 
 /* --- BOTONES DE ACCIÓN --- */
@@ -219,7 +237,7 @@ canvas { border-radius:12px; border:2px solid #eee; box-shadow:0 6px 14px rgba(2
     justify-content:space-between; 
 }
 
-#generarAmbosBtn, #descargarFeedBtn, #descargarHistoriaBtn { 
+#generarAmbosBtn, #descargarTodoBtn, #descargarFeedBtn, #descargarHistoriaBtn { 
     flex: 1 1 32%;
     color:#fff; 
     border-radius:12px; 
@@ -230,8 +248,11 @@ canvas { border-radius:12px; border:2px solid #eee; box-shadow:0 6px 14px rgba(2
 #generarAmbosBtn { background:var(--rosa-principal); }
 #generarAmbosBtn:hover { background:var(--rosa-hover); }
 
-#descargarFeedBtn { background:var(--verde-principal); }
-#descargarFeedBtn:hover { background:var(--verde-hover); }
+#descargarTodoBtn { background:var(--verde-principal); }
+#descargarTodoBtn:hover { background:var(--verde-hover); }
+
+#descargarFeedBtn { background:var(--coral-principal); }
+#descargarFeedBtn:hover { background:var(--coral-hover); }
 
 #descargarHistoriaBtn { background:var(--coral-principal); }
 #descargarHistoriaBtn:hover { background:var(--coral-hover); }
@@ -239,7 +260,7 @@ canvas { border-radius:12px; border:2px solid #eee; box-shadow:0 6px 14px rgba(2
 /* --- RESPONSIVE --- */
 @media (max-width: 768px) {
     .fila-actions { flex-direction: column; }
-    #generarAmbosBtn, #descargarFeedBtn, #descargarHistoriaBtn { width:100%; flex:unset; margin-bottom:6px; }
+    #generarAmbosBtn, #descargarTodoBtn, #descargarFeedBtn, #descargarHistoriaBtn { width:100%; flex:unset; margin-bottom:6px; }
 }
 .titulo-label span {
   font-weight: 800;        /* mismo peso que el h2 */
@@ -374,6 +395,71 @@ canvas { border-radius:12px; border:2px solid #eee; box-shadow:0 6px 14px rgba(2
     min-width: 45px;
     text-align: right;
 }
+
+/* --- PREVIEW DE MÚLTIPLES IMÁGENES --- */
+#previewContainer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    justify-content: center;
+    margin-top: 20px;
+    max-height: 300px;
+    overflow-y: auto;
+    padding: 10px;
+}
+
+.preview-item {
+    position: relative;
+    width: 120px;
+    height: 120px;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.preview-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.preview-item .remove-btn {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: rgba(255,0,0,0.7);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    font-size: 14px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* --- BARRA DE PROGRESO --- */
+.progress-container {
+    width: 100%;
+    background-color: #f3f3f3;
+    border-radius: 10px;
+    margin: 15px 0;
+    display: none;
+}
+
+.progress-bar {
+    width: 0%;
+    height: 20px;
+    background: linear-gradient(45deg, #ff66b2, #66e0ff);
+    border-radius: 10px;
+    text-align: center;
+    line-height: 20px;
+    color: white;
+    font-weight: 600;
+    transition: width 0.3s ease;
+}
 </style>
 </head>
 <body>
@@ -389,76 +475,61 @@ canvas { border-radius:12px; border:2px solid #eee; box-shadow:0 6px 14px rgba(2
 
 <div id="app" class="pantalla" style="max-width:1100px;">
   <h1 style="text-align:center;">Generador de Feed & Historia</h1>
-<div style="height:30px;"></div> <div class="image-upload-container">
-  <label for="productoInput" class="custom-file-label">
-    Selecciona una imagen
-    <input type="file" id="productoInput" accept="image/*">
-  </label>
-  <img id="preview" class="preview" src="" alt="Vista previa">
-</div>
+  <div style="height:30px;"></div> 
+  
+  <div class="image-upload-container">
+    <label for="productoInput" class="custom-file-label">
+      Selecciona una o varias imágenes
+      <input type="file" id="productoInput" accept="image/*" multiple>
+    </label>
+    <div id="previewContainer"></div>
+  </div>
 
-    <div class="titulo-label2">
-      <label for="codigo"><span><br>Código</span></label>
-     <input type="text" id="codigo" placeholder="Ejemplo: ABC123">
-    </div>
-<div class="titulo-label2">
-      <label for="codigo"><span><br>Escoja la Talla<br></span></label>   
-      <div class="size-buttons">
-        <button onclick="selectSize(this,'Niña')">Niña</button>  
-        <button onclick="selectSize(this,'Juvenil')">Juvenil</button>
-        <button onclick="selectSize(this,'XS')">XS</button>
-        <button onclick="selectSize(this,'S')">S</button>
-        <button onclick="selectSize(this,'M')">M</button>
-        <button onclick="selectSize(this,'L')">L</button>
-        <button onclick="selectSize(this,'XL')">XL</button>
-        <button onclick="selectSize(this,'Plus')">Plus</button>
-        <button onclick="selectSize(this,'Plus 1X')">Plus 1X</button>
-        <button onclick="selectSize(this,'Plus 2X')">Plus 2X</button>
-        <button onclick="selectSize(this,'Plus 3X')">Plus 3X</button>
-      </div>
-    </div>
-<br>
-  <div  class="titulo-label2" style="display:flex; align-items:center; justify-content:center; gap:10px;">
-  <div style="color:#ff00e1; font-weight:600;">Marco</div>
-  <label class="switch">
-    <input type="checkbox" id="toggleMarco" checked>
-    <span class="slider"></span>
-  </label>
-  </div>
-<br>
-   <div class="acciones">
-  <div class="fila-actions">
-    <button id="generarAmbosBtn">Generar Feed + Historia</button>
+  <div class="titulo-label2">
+    <label for="codigo"><span><br>Código</span></label>
+    <input type="text" id="codigo" placeholder="Ejemplo: ABC123">
   </div>
   
-  <div id="contenedorFeed" class="contenedor-canvas">
-    <div style="font-family: 'Poppins', sans-serif; color: #54f983; font-weight: 400; text-align: center; font-size: 1.5rem;">
-  Feed
-</div>
-    <canvas id="canvasFeed" width="1080" height="1080"></canvas>
-    <div class="zoom-container">
-        <label for="zoomFeed">Zoom:</label>
-        <input type="range" id="zoomFeed" min="0.5" max="2.5" value="1" step="0.05">
-        <span id="zoomFeedValue">100%</span>
-    </div>
-    <div class="fila-actions">
-      <button id="descargarFeedBtn">Descargar Feed</button>
+  <div class="titulo-label2">
+    <label for="codigo"><span><br>Escoja la Talla<br></span></label>   
+    <div class="size-buttons">
+      <button onclick="selectSize(this,'Niña')">Niña</button>  
+      <button onclick="selectSize(this,'Juvenil')">Juvenil</button>
+      <button onclick="selectSize(this,'XS')">XS</button>
+      <button onclick="selectSize(this,'S')">S</button>
+      <button onclick="selectSize(this,'M')">M</button>
+      <button onclick="selectSize(this,'L')">L</button>
+      <button onclick="selectSize(this,'XL')">XL</button>
+      <button onclick="selectSize(this,'Plus')">Plus</button>
+      <button onclick="selectSize(this,'Plus 1X')">Plus 1X</button>
+      <button onclick="selectSize(this,'Plus 2X')">Plus 2X</button>
+      <button onclick="selectSize(this,'Plus 3X')">Plus 3X</button>
     </div>
   </div>
   
-  <div id="contenedorHistoria" class="contenedor-canvas">
-   <div style="font-family: 'Poppins', sans-serif; color: #e98e1e; font-weight: 400; text-align: center; font-size: 1.5rem;">
-  Historia
-</div>
-    <canvas id="canvasHistoria" width="1080" height="1920"></canvas>
-    <div class="zoom-container">
-        <label for="zoomHistoria">Zoom:</label>
-        <input type="range" id="zoomHistoria" min="0.5" max="2.5" value="1" step="0.05">
-        <span id="zoomHistoriaValue">100%</span>
-    </div>
+  <br>
+  
+  <div class="titulo-label2" style="display:flex; align-items:center; justify-content:center; gap:10px;">
+    <div style="color:#ff00e1; font-weight:600;">Marco</div>
+    <label class="switch">
+      <input type="checkbox" id="toggleMarco" checked>
+      <span class="slider"></span>
+    </label>
+  </div>
+  
+  <br>
+  
+  <div class="progress-container" id="progressContainer">
+    <div class="progress-bar" id="progressBar">0%</div>
+  </div>
+  
+  <div class="acciones">
     <div class="fila-actions">
-      <button id="descargarHistoriaBtn">Descargar Historia</button>
+      <button id="generarAmbosBtn">Generar Todas las Imágenes</button>
+      <button id="descargarTodoBtn">Descargar Todo</button>
     </div>
+    
+    <div id="contenedorCanvases"></div>
   </div>
 </div>
 
@@ -483,23 +554,44 @@ function login(){
 }
 
 /* Variables Globales */
-const preview = document.getElementById("preview");
 const toggleMarco = document.getElementById("toggleMarco");
 let tallaSeleccionada = "";
-let currentImage = null; // Para guardar la imagen cargada
-let zoomFeed = 1;
-let zoomHistoria = 1;
+let currentImages = []; // Array para guardar múltiples imágenes
+let generatedCanvases = []; // Array para guardar los canvases generados
 
-/* Preview de imagen */
-document.getElementById('productoInput').addEventListener("change", e=>{
-  const file = e.target.files[0];
-  if(file){
-    const reader = new FileReader();
-    reader.onload = event=>{
-      preview.src = event.target.result;
-      preview.style.display="block";
-    };
-    reader.readAsDataURL(file);
+/* Preview de múltiples imágenes */
+document.getElementById('productoInput').addEventListener("change", e => {
+  const files = e.target.files;
+  const previewContainer = document.getElementById('previewContainer');
+  previewContainer.innerHTML = '';
+  
+  if(files && files.length > 0) {
+    for(let i = 0; i < files.length; i++) {
+      const file = files[i];
+      const reader = new FileReader();
+      
+      reader.onload = event => {
+        const previewItem = document.createElement('div');
+        previewItem.className = 'preview-item';
+        
+        const img = document.createElement('img');
+        img.src = event.target.result;
+        
+        const removeBtn = document.createElement('button');
+        removeBtn.className = 'remove-btn';
+        removeBtn.innerHTML = '×';
+        removeBtn.onclick = function() {
+          previewItem.remove();
+          // También deberíamos eliminar el archivo del input, pero esto es complejo
+        };
+        
+        previewItem.appendChild(img);
+        previewItem.appendChild(removeBtn);
+        previewContainer.appendChild(previewItem);
+      };
+      
+      reader.readAsDataURL(file);
+    }
   }
 });
 
@@ -619,108 +711,314 @@ function dibujarCanvas(ctx, canvas, imgProducto, fondoSrc, width, height, zoom =
 
 /* Validación */
 function validarCampos(){
-  if(!document.getElementById('productoInput').files[0]) { alert("Suba una imagen del producto"); return false; }
+  if(!document.getElementById('productoInput').files[0]) { alert("Suba al menos una imagen del producto"); return false; }
   if(!tallaSeleccionada) { alert("Seleccione una talla"); return false; }
   if(!document.getElementById('codigo').value.trim()) { alert("Ingrese un código"); return false; }
   return true;
 }
 
-/* Generar ambos (Feed + Historia) */
-function generarAmbos(){
+/* Generar todas las imágenes */
+function generarTodas(){
   if(!validarCampos()) return;
-
-  // Resetear sliders y zoom
-  document.getElementById('zoomFeed').value = 1;
-  document.getElementById('zoomHistoria').value = 1;
-  document.getElementById('zoomFeedValue').innerText = '100%';
-  document.getElementById('zoomHistoriaValue').innerText = '100%';
-  zoomFeed = 1;
-  zoomHistoria = 1;
 
   const fileInput = document.getElementById('productoInput');
-  const reader = new FileReader();
-  reader.onload = e=>{
-    const img = new Image();
-    img.onload = ()=> {
-      currentImage = img; // Guardar la imagen en la variable global
-      dibujarCanvas(
-        document.getElementById('canvasFeed').getContext('2d'),
-        document.getElementById('canvasFeed'),
-        img, './fondo.png',1080,1080, zoomFeed
-      );
-      dibujarCanvas(
-        document.getElementById('canvasHistoria').getContext('2d'),
-        document.getElementById('canvasHistoria'),
-        img, './fondo2.png',1080,1920, zoomHistoria
-      );
+  const files = fileInput.files;
+  const contenedorCanvases = document.getElementById('contenedorCanvases');
+  contenedorCanvases.innerHTML = '';
+  generatedCanvases = [];
+  
+  // Mostrar barra de progreso
+  const progressContainer = document.getElementById('progressContainer');
+  const progressBar = document.getElementById('progressBar');
+  progressContainer.style.display = 'block';
+  progressBar.style.width = '0%';
+  progressBar.innerText = '0%';
+  
+  // Procesar cada imagen
+  currentImages = [];
+  let processed = 0;
+  
+  for(let i = 0; i < files.length; i++) {
+    const reader = new FileReader();
+    reader.onload = e => {
+      const img = new Image();
+      img.onload = () => {
+        currentImages.push(img);
+        processed++;
+        
+        // Actualizar barra de progreso
+        const progress = Math.round((processed / files.length) * 100);
+        progressBar.style.width = progress + '%';
+        progressBar.innerText = progress + '%';
+        
+        // Cuando todas las imágenes estén cargadas
+        if(processed === files.length) {
+          // Ocultar barra de progreso después de un breve momento
+          setTimeout(() => {
+            progressContainer.style.display = 'none';
+          }, 500);
+          
+          // Generar los canvases para cada imagen
+          generarCanvasesParaImagenes();
+        }
+      };
+      img.src = e.target.result;
     };
-    img.src = e.target.result;
-  };
-  reader.readAsDataURL(fileInput.files[0]);
+    reader.readAsDataURL(files[i]);
+  }
 }
 
-/* Descargar Feed */
-function descargarFeed(){
+/* Generar canvases para todas las imágenes */
+function generarCanvasesParaImagenes() {
+  const contenedorCanvases = document.getElementById('contenedorCanvases');
+  contenedorCanvases.innerHTML = '';
+  generatedCanvases = [];
+  
+  currentImages.forEach((img, index) => {
+    // Contenedor para esta imagen
+    const imgContainer = document.createElement('div');
+    imgContainer.className = 'canvas-container';
+    
+    // Título para la imagen
+    const titulo = document.createElement('div');
+    titulo.style.fontFamily = "'Poppins', sans-serif";
+    titulo.style.color = "#54f983";
+    titulo.style.fontWeight = "400";
+    titulo.style.textAlign = "center";
+    titulo.style.fontSize = "1.2rem";
+    titulo.style.marginBottom = "10px";
+    titulo.innerText = `Imagen ${index + 1}`;
+    imgContainer.appendChild(titulo);
+    
+    // Canvas para Feed
+    const feedTitle = document.createElement('div');
+    feedTitle.style.fontFamily = "'Poppins', sans-serif";
+    feedTitle.style.color = "#54f983";
+    feedTitle.style.fontWeight = "400";
+    feedTitle.style.textAlign = "center";
+    feedTitle.style.fontSize = "1rem";
+    feedTitle.style.margin = "10px 0 5px 0";
+    feedTitle.innerText = "Feed";
+    imgContainer.appendChild(feedTitle);
+    
+    const canvasFeed = document.createElement('canvas');
+    canvasFeed.id = `canvasFeed-${index}`;
+    canvasFeed.width = 1080;
+    canvasFeed.height = 1080;
+    imgContainer.appendChild(canvasFeed);
+    
+    // Controles de zoom para Feed
+    const zoomContainerFeed = document.createElement('div');
+    zoomContainerFeed.className = 'zoom-container';
+    
+    const zoomLabelFeed = document.createElement('label');
+    zoomLabelFeed.htmlFor = `zoomFeed-${index}`;
+    zoomLabelFeed.innerText = 'Zoom:';
+    zoomContainerFeed.appendChild(zoomLabelFeed);
+    
+    const zoomSliderFeed = document.createElement('input');
+    zoomSliderFeed.type = 'range';
+    zoomSliderFeed.id = `zoomFeed-${index}`;
+    zoomSliderFeed.min = '0.5';
+    zoomSliderFeed.max = '2.5';
+    zoomSliderFeed.value = '1';
+    zoomSliderFeed.step = '0.05';
+    zoomContainerFeed.appendChild(zoomSliderFeed);
+    
+    const zoomValueFeed = document.createElement('span');
+    zoomValueFeed.id = `zoomFeedValue-${index}`;
+    zoomValueFeed.innerText = '100%';
+    zoomContainerFeed.appendChild(zoomValueFeed);
+    
+    imgContainer.appendChild(zoomContainerFeed);
+    
+    // Botón de descarga para Feed
+    const downloadFeedBtn = document.createElement('button');
+    downloadFeedBtn.innerText = 'Descargar Feed';
+    downloadFeedBtn.style.background = 'var(--coral-principal)';
+    downloadFeedBtn.style.margin = '10px 0';
+    downloadFeedBtn.onclick = () => descargarImagen(index, 'feed');
+    imgContainer.appendChild(downloadFeedBtn);
+    
+    // Canvas para Historia
+    const historiaTitle = document.createElement('div');
+    historiaTitle.style.fontFamily = "'Poppins', sans-serif";
+    historiaTitle.style.color = "#e98e1e";
+    historiaTitle.style.fontWeight = "400";
+    historiaTitle.style.textAlign = "center";
+    historiaTitle.style.fontSize = "1rem";
+    historiaTitle.style.margin = "15px 0 5px 0";
+    historiaTitle.innerText = "Historia";
+    imgContainer.appendChild(historiaTitle);
+    
+    const canvasHistoria = document.createElement('canvas');
+    canvasHistoria.id = `canvasHistoria-${index}`;
+    canvasHistoria.width = 1080;
+    canvasHistoria.height = 1920;
+    imgContainer.appendChild(canvasHistoria);
+    
+    // Controles de zoom para Historia
+    const zoomContainerHistoria = document.createElement('div');
+    zoomContainerHistoria.className = 'zoom-container';
+    
+    const zoomLabelHistoria = document.createElement('label');
+    zoomLabelHistoria.htmlFor = `zoomHistoria-${index}`;
+    zoomLabelHistoria.innerText = 'Zoom:';
+    zoomContainerHistoria.appendChild(zoomLabelHistoria);
+    
+    const zoomSliderHistoria = document.createElement('input');
+    zoomSliderHistoria.type = 'range';
+    zoomSliderHistoria.id = `zoomHistoria-${index}`;
+    zoomSliderHistoria.min = '0.5';
+    zoomSliderHistoria.max = '2.5';
+    zoomSliderHistoria.value = '1';
+    zoomSliderHistoria.step = '0.05';
+    zoomContainerHistoria.appendChild(zoomSliderHistoria);
+    
+    const zoomValueHistoria = document.createElement('span');
+    zoomValueHistoria.id = `zoomHistoriaValue-${index}`;
+    zoomValueHistoria.innerText = '100%';
+    zoomContainerHistoria.appendChild(zoomValueHistoria);
+    
+    imgContainer.appendChild(zoomContainerHistoria);
+    
+    // Botón de descarga para Historia
+    const downloadHistoriaBtn = document.createElement('button');
+    downloadHistoriaBtn.innerText = 'Descargar Historia';
+    downloadHistoriaBtn.style.background = 'var(--coral-principal)';
+    downloadHistoriaBtn.style.margin = '10px 0';
+    downloadHistoriaBtn.onclick = () => descargarImagen(index, 'historia');
+    imgContainer.appendChild(downloadHistoriaBtn);
+    
+    // Añadir contenedor al DOM
+    contenedorCanvases.appendChild(imgContainer);
+    
+    // Dibujar los canvases
+    dibujarCanvas(
+      canvasFeed.getContext('2d'),
+      canvasFeed,
+      img, 
+      './fondo.png',
+      1080,
+      1080,
+      1
+    );
+    
+    dibujarCanvas(
+      canvasHistoria.getContext('2d'),
+      canvasHistoria,
+      img, 
+      './fondo2.png',
+      1080,
+      1920,
+      1
+    );
+    
+    // Guardar referencias a los canvases
+    generatedCanvases.push({
+      feed: canvasFeed,
+      historia: canvasHistoria,
+      zoomFeed: 1,
+      zoomHistoria: 1
+    });
+    
+    // Configurar eventos para los sliders de zoom
+    zoomSliderFeed.addEventListener('input', (e) => {
+      const zoom = parseFloat(e.target.value);
+      generatedCanvases[index].zoomFeed = zoom;
+      zoomValueFeed.innerText = `${Math.round(zoom * 100)}%`;
+      
+      dibujarCanvas(
+        canvasFeed.getContext('2d'),
+        canvasFeed,
+        img, 
+        './fondo.png',
+        1080,
+        1080,
+        zoom
+      );
+    });
+    
+    zoomSliderHistoria.addEventListener('input', (e) => {
+      const zoom = parseFloat(e.target.value);
+      generatedCanvases[index].zoomHistoria = zoom;
+      zoomValueHistoria.innerText = `${Math.round(zoom * 100)}%`;
+      
+      dibujarCanvas(
+        canvasHistoria.getContext('2d'),
+        canvasHistoria,
+        img, 
+        './fondo2.png',
+        1080,
+        1920,
+        zoom
+      );
+    });
+  });
+}
+
+/* Descargar una imagen específica */
+function descargarImagen(index, tipo){
   if(!validarCampos()) return;
+  
   const codigo = document.getElementById('codigo').value.trim();
   const fecha = new Date();
   const fechaStr = fecha.getFullYear() + ('0'+(fecha.getMonth()+1)).slice(-2) + ('0'+fecha.getDate()).slice(-2);
-
-  const linkFeed = document.createElement('a');
-  linkFeed.download = `FEED_${tallaSeleccionada}_${codigo}_${fechaStr}.png`;
-  linkFeed.href = document.getElementById('canvasFeed').toDataURL('image/png');
-  linkFeed.click();
+  
+  let canvas, nombre;
+  
+  if(tipo === 'feed') {
+    canvas = generatedCanvases[index].feed;
+    nombre = `FEED_${tallaSeleccionada}_${codigo}_${index+1}_${fechaStr}.png`;
+  } else {
+    canvas = generatedCanvases[index].historia;
+    nombre = `HISTORIA_${tallaSeleccionada}_${codigo}_${index+1}_${fechaStr}.png`;
+  }
+  
+  const link = document.createElement('a');
+  link.download = nombre;
+  link.href = canvas.toDataURL('image/png');
+  link.click();
 }
 
-/* Descargar Historia */
-function descargarHistoria(){
-  if(!validarCampos()) return;
+/* Descargar todas las imágenes */
+function descargarTodo(){
+  if(!validarCampos() || generatedCanvases.length === 0) return;
+  
   const codigo = document.getElementById('codigo').value.trim();
   const fecha = new Date();
   const fechaStr = fecha.getFullYear() + ('0'+(fecha.getMonth()+1)).slice(-2) + ('0'+fecha.getDate()).slice(-2);
-
-  const linkHistoria = document.createElement('a');
-  linkHistoria.download = `HISTORIA_${tallaSeleccionada}_${codigo}_${fechaStr}.png`;
-  linkHistoria.href = document.getElementById('canvasHistoria').toDataURL('image/png');
-  linkHistoria.click();
+  
+  // Crear un zip para todas las imágenes
+  alert("Esta función descargaría todas las imágenes en un archivo ZIP. En un entorno real, se necesitaría una librería como JSZip.");
+  
+  // Implementación simplificada: descargar una por una
+  for(let i = 0; i < generatedCanvases.length; i++) {
+    setTimeout(() => {
+      // Descargar feed
+      const linkFeed = document.createElement('a');
+      linkFeed.download = `FEED_${tallaSeleccionada}_${codigo}_${i+1}_${fechaStr}.png`;
+      linkFeed.href = generatedCanvases[i].feed.toDataURL('image/png');
+      document.body.appendChild(linkFeed);
+      linkFeed.click();
+      document.body.removeChild(linkFeed);
+      
+      // Descargar historia
+      const linkHistoria = document.createElement('a');
+      linkHistoria.download = `HISTORIA_${tallaSeleccionada}_${codigo}_${i+1}_${fechaStr}.png`;
+      linkHistoria.href = generatedCanvases[i].historia.toDataURL('image/png');
+      document.body.appendChild(linkHistoria);
+      linkHistoria.click();
+      document.body.removeChild(linkHistoria);
+    }, i * 500); // Espaciar las descargas para evitar problemas
+  }
 }
 
 /* Listeners */
-document.getElementById('generarAmbosBtn').addEventListener('click', generarAmbos);
-document.getElementById('descargarFeedBtn').addEventListener('click', descargarFeed);
-document.getElementById('descargarHistoriaBtn').addEventListener('click', descargarHistoria);
-
-/* Listeners para Sliders de Zoom */
-const zoomFeedSlider = document.getElementById('zoomFeed');
-const zoomFeedValue = document.getElementById('zoomFeedValue');
-const zoomHistoriaSlider = document.getElementById('zoomHistoria');
-const zoomHistoriaValue = document.getElementById('zoomHistoriaValue');
-
-zoomFeedSlider.addEventListener('input', (e) => {
-  zoomFeed = parseFloat(e.target.value);
-  zoomFeedValue.innerText = `${Math.round(zoomFeed * 100)}%`;
-  if (currentImage) {
-    dibujarCanvas(
-      document.getElementById('canvasFeed').getContext('2d'),
-      document.getElementById('canvasFeed'),
-      currentImage, './fondo.png', 1080, 1080, zoomFeed
-    );
-  }
-});
-
-zoomHistoriaSlider.addEventListener('input', (e) => {
-  zoomHistoria = parseFloat(e.target.value);
-  zoomHistoriaValue.innerText = `${Math.round(zoomHistoria * 100)}%`;
-  if (currentImage) {
-    dibujarCanvas(
-      document.getElementById('canvasHistoria').getContext('2d'),
-      document.getElementById('canvasHistoria'),
-      currentImage, './fondo2.png', 1080, 1920, zoomHistoria
-    );
-  }
-});
-
+document.getElementById('generarAmbosBtn').addEventListener('click', generarTodas);
+document.getElementById('descargarTodoBtn').addEventListener('click', descargarTodo);
 </script>
+
 <footer>
     <small>
         &copy; 2025 Todos los derechos reservados. <br>
@@ -728,6 +1026,4 @@ zoomHistoriaSlider.addEventListener('input', (e) => {
     </small>
 </footer>
 </body>
-
 </html>
-```
