@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>APP Generador de Publicación Instagram Andre Store</title>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
 
 <style>
   :root {
@@ -14,149 +14,279 @@
     --coral-hover: #ff4500;
     --verde-principal: #32cd32;
     --verde-hover: #28a428;
-  }
+    --texto: #222;
+  }.canvas-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
 
+.canvas-titulo {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--rosa-principal);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 6px;
+}
+/* Estilo especial para el grupo Código */
+.grupo input#codigo {
+  border: 2px solid #ffaadf;
+  border-radius: 14px;
+  padding: 12px 16px;
+  font-size: 16px;
+  font-weight: 500;
+  color: #333;
+  transition: all 0.3s ease;
+  background: #fffdfd;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.08);
+}
+
+.grupo input#codigo::placeholder {
+  color: #c06ba8;
+  font-style: italic;
+}
+
+.grupo input#codigo:focus {
+  border-color: #ff69b4;
+  box-shadow: 0 0 10px rgba(255,105,180,0.4);
+  outline: none;
+}
+
+.grupo label[for="codigo"] span {
+  font-size: 15px;
+  font-weight: 700;
+  color: #ff3399;
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+  display: inline-block;
+}
+  /* Fondo con imagen escalada */
   body { 
     font-family:'Poppins',sans-serif; 
     display:flex; 
     flex-direction:column; 
     align-items:center; 
-    justify-content:center;
-    background:#f0f0f0; 
+    justify-content:flex-start;
+    background: url('inicio.png') no-repeat center center fixed;
+    background-size: cover;
     margin:0; 
     min-height:100vh;
+    padding: 16px;
   }
 
+  /* Overlay para legibilidad */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background: rgba(255,255,255,0.85);
+    z-index:-1;
+  }
+
+  /* Tarjeta genérica */
   .pantalla {
     text-align:center;
-    background:white;
-    padding:40px;
+    background:rgba(255,255,255,0.92);
+    backdrop-filter: blur(6px);
+    padding:32px;
     border-radius:20px;
-    box-shadow:0 4px 20px rgba(0,0,0,0.2);
-    max-width:500px;
-    width:90%;
+    box-shadow:0 10px 25px rgba(0,0,0,0.18);
+    max-width:520px;
+    width:100%;
+    margin: 16px auto;
   }
 
-  .pantalla h1, .pantalla h2 {
-    color:#ff69b4; 
-    margin-bottom:20px;
-  }
-
-  .pantalla p { margin-bottom:25px; font-size:16px; color:#444; }
+  .pantalla h2 { color:#ff69b4; margin:0 0 14px 0; font-weight:800; }
+  .pantalla p { margin-bottom:18px; font-size:16px; color:#444; }
 
   input[type="text"], input[type="password"] {
-    width:100%; padding:10px; margin:8px 0;
-    border-radius:8px; border:1px solid #ccc; font-size:14px;
+    width:100%; padding:12px 14px; margin:8px 0;
+    border-radius:12px; border:1px solid #ccc; font-size:15px;
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.08);
+    transition: border .2s, box-shadow .2s;
+  }
+  input[type="text"]:focus, input[type="password"]:focus {
+    border-color: var(--rosa-principal);
+    box-shadow: 0 0 8px rgba(255,105,180,0.4);
+    outline:none;
   }
 
   button { 
-    padding:12px 26px; border:none; border-radius:10px;
+    padding:12px 26px; border:none; border-radius:12px;
     font-size:16px; font-weight:600; cursor:pointer;
     background:linear-gradient(45deg,#ff66b2,#66e0ff);
-    color:white; transition:transform 0.3s ease, background 0.3s ease;
+    color:white; transition:transform 0.25s, background 0.25s, box-shadow 0.25s;
   }
-  button:hover { transform:scale(1.05); background:linear-gradient(45deg,#ff3399,#33ccff); }
+  button:hover { 
+    transform:translateY(-1px); 
+    background:linear-gradient(45deg,#ff3399,#33ccff); 
+    box-shadow: 0 6px 14px rgba(0,0,0,0.18);
+  }
 
   #login, #app { display:none; }
 
   .login-img {
-    width:70%;
-    max-width:250px;
-    margin:0 auto 20px auto;
-    display:block;
-    border-radius:12px;
-    box-shadow:0 4px 12px rgba(0,0,0,0.15);
+    width:70%; max-width:240px; margin:0 auto 16px auto; display:block;
+    border-radius:12px; box-shadow:0 4px 12px rgba(0,0,0,0.15);
   }
 
+  /* Panel de controles con blur mejorado */
   .controls { 
-    display:flex; 
-    flex-direction:column; 
-    gap:10px; 
-    width:90%; 
-    max-width:400px; 
-    margin-bottom:20px; 
-    background:rgba(255,255,255,0.95); 
-    padding:12px; 
-    border-radius:12px; 
-    box-shadow:0 4px 10px rgba(0,0,0,0.2); 
+    display:flex; flex-direction:column; gap:14px;
+    width:100%; max-width:520px; 
+    background:rgba(255,255,255,0.9);
+    backdrop-filter: blur(10px);
+    padding:22px; border-radius:18px; 
+    box-shadow:0 10px 24px rgba(0,0,0,0.18);
+    margin: 10px auto 14px auto;
   }
-  .controls label { display:flex; flex-direction:column; font-weight:600; }
-  .controls input[type="text"], .controls input[type="file"] { margin-top:4px; padding:6px 8px; border-radius:8px; border:1px solid #ccc; font-size:14px; }
-  .preview { width:80px; height:80px; object-fit:cover; border-radius:10px; border:2px solid #ccc; margin-top:5px; display:none; }
-  .size-buttons { display:flex; flex-wrap:wrap; gap:8px; margin-top:5px; justify-content:center; }
-  .size-buttons button { padding:8px 14px; border:none; border-radius:8px; cursor:pointer; background:linear-gradient(45deg,#ff66b2,#66e0ff); color:white; font-weight:bold; transition:transform 0.2s, background 0.3s; flex:1 1 30%; }
-  .size-buttons button:hover { transform:scale(1.05); background:linear-gradient(45deg,#ff3399,#33ccff); }
-  .size-buttons button.active { background:#ff33cc; color:white; }
-  #generarFeedBtn, #generarHistoriaBtn, #descargarBtn { padding:10px 16px; font-size:16px; border:none; cursor:pointer; border-radius:8px; font-weight:bold; margin-top:10px; color:white; }
-  #generarFeedBtn { background:var(--rosa-principal); }  #generarFeedBtn:hover { background:var(--rosa-hover); }
-  #generarHistoriaBtn { background:var(--coral-principal); }  #generarHistoriaBtn:hover { background:var(--coral-hover); }
-  #descargarBtn { background:var(--verde-principal); }  #descargarBtn:hover { background:var(--verde-hover); }
-  canvas { width:90vw; max-width:1080px; height:auto; border-radius:12px; display:block; border:2px solid #ddd; box-shadow:0 4px 10px rgba(241, 194, 218, 0.8); background:#fff; }
+
+  .controls .grupo { display:flex; flex-direction:column; gap:8px; text-align:left; }
+  .controls label span, .controls .label-standalone {
+    font-weight:600; color:var(--texto); font-size:15px;
+  }
+
+  .controls input[type="file"], .controls input[type="text"] {
+    width:100%; padding:12px 14px;
+    border-radius:12px; border:1px solid #ccc; font-size:15px;
+    background:#fff; box-shadow: inset 0 1px 3px rgba(0,0,0,0.06);
+  }
+
+  /* Botón del file input (Chrome/Edge) */
+  .controls input[type="file"]::file-selector-button{
+    margin-right: 10px;
+    border:none; border-radius:10px;
+    padding:8px 12px; font-weight:600; 
+    background: linear-gradient(45deg,#ff66b2,#66e0ff);
+    color:#fff; cursor:pointer;
+  }
+  .controls input[type="file"]::file-selector-button:hover{
+    background: linear-gradient(45deg,#ff3399,#33ccff);
+  }
+
+  .preview { 
+    width:120px; height:120px; object-fit:cover; 
+    border-radius:12px; border:2px solid #e8d6e0; 
+    display:none; 
+  }
+
+  .size-buttons { display:flex; flex-wrap:wrap; gap:8px; margin-top:2px; }
+  .size-buttons button { 
+    padding:10px 14px; border:none; border-radius:12px; cursor:pointer; 
+    background:linear-gradient(45deg,#ff66b2,#66e0ff); color:white; font-weight:700; 
+    transition:transform 0.2s, filter 0.2s;
+    flex:1 1 calc(33.33% - 8px);
+    min-width: 96px;
+  }
+  .size-buttons button:hover { transform:translateY(-1px); filter:brightness(1.05); }
+  .size-buttons button.active { background:#ff33cc; }
+
+  .fila-actions { display:flex; gap:10px; flex-wrap:wrap; }
+  #generarAmbosBtn, #descargarBtn { 
+    flex:1 1 220px; 
+    color:#fff; border-radius:12px; font-weight:800;
+  }
+  #generarAmbosBtn { background:var(--rosa-principal); }
+  #generarAmbosBtn:hover { background:var(--rosa-hover); }
+  #descargarBtn { background:var(--verde-principal); }
+  #descargarBtn:hover { background:var(--verde-hover); }
+
   .switch { position: relative; display: inline-block; width:60px; height:28px; }
   .switch input { display:none; }
-  .slider { position:absolute; cursor:pointer; top:0; left:0; right:0; bottom:0; background-color:#ccc; transition:0.4s; border-radius:28px; }
-  .slider:before { position:absolute; content:""; height:22px; width:22px; left:3px; bottom:3px; background-color:white; transition:0.4s; border-radius:50%; }
+  .slider { position:absolute; cursor:pointer; inset:0; background-color:#ccc; transition:0.3s; border-radius:28px; }
+  .slider:before { content:""; position:absolute; height:22px; width:22px; left:3px; bottom:3px; background:#fff; transition:0.3s; border-radius:50%; }
   input:checked + .slider { background-color:#6666ff; }
   input:checked + .slider:before { transform:translateX(32px); }
+
+  /* Contenedor de canvases */
+  #contenedorCanvases{
+    display:flex; gap:18px; flex-wrap:wrap; justify-content:center; margin: 8px auto 24px auto;
+    width:100%; max-width:1020px;
+  }
+  canvas {
+    border-radius:12px; border:2px solid #eee;
+    box-shadow:0 6px 14px rgba(241,194,218,0.6);
+    width:90vw; max-width:480px; height:auto; background:#fff;
+  }
+
+  /* Responsive */
+  @media(max-width:600px){
+    .pantalla { padding:22px; }
+    .controls { padding:18px; }
+    .size-buttons button { flex:1 1 calc(50% - 8px); }
+  }
 </style>
 </head>
 <body>
 
-<!-- Login + Pantalla bienvenida con imagen -->
+<!-- LOGIN -->
 <div id="login" class="pantalla">
   <img src="inicio.png" alt="Inicio" class="login-img">
   <h2>Bienvenido a la App de Mi Princesa</h2>
   <input type="text" id="usuario" placeholder="Usuario">
   <input type="password" id="clave" placeholder="Contraseña">
   <button onclick="login()">Ingresar y Empezar</button>
-  <p id="error" style="color:red; display:none;">Usuario o contraseña incorrectos</p>
+  <p id="error" style="color:#d63031; display:none; margin-top:10px;">Usuario o contraseña incorrectos</p>
 </div>
 
-<!-- App generador -->
-<div id="app">
+<!-- APP -->
+<div id="app" class="pantalla" style="max-width:1100px;">
+  <h2 style="margin-bottom:10px;">Generador: Feed + Historia</h2>
+
   <div class="controls">
-    <label>Subir imagen del Vestido de Baño
-      <input type="file" id="productoInput" accept="image/*">
-    </label>
-    <img id="preview" class="preview" src="" alt="Vista previa">
-    
-    <label>Código
-      <input type="text" id="codigo" placeholder="Ejemplo: ABC123">
-    </label>
-  
-    Escoja la Talla
-    <div class="size-buttons">
-      <button onclick="selectSize(this,'Niña')">Niña</button>  
-      <button onclick="selectSize(this,'Juvenil')">Juvenil</button>
-      <button onclick="selectSize(this,'XS')">XS</button>
-      <button onclick="selectSize(this,'S')">S</button>
-      <button onclick="selectSize(this,'M')">M</button>
-      <button onclick="selectSize(this,'L')">L</button>
-      <button onclick="selectSize(this,'XL')">XL</button>
-      <button onclick="selectSize(this,'Plus')">Plus</button>
-      <button onclick="selectSize(this,'Plus 1X')">Plus 1X</button>
-      <button onclick="selectSize(this,'Plus 2X')">Plus 2X</button>
-      <button onclick="selectSize(this,'Plus 3X')">Plus 3X</button>
+    <div class="grupo">
+      <label><span>Subir imagen del Vestido de Baño</span>
+        <input type="file" id="productoInput" accept="image/*">
+      </label>
+      <img id="preview" class="preview" src="" alt="Vista previa">
     </div>
-  
-    <label style="display:flex; align-items:center; gap:10px; margin-top:10px;">
-      <span>Marco</span>
+
+    <div class="grupo">
+      <label for="codigo"><span>Código</span></label>
+      <input type="text" id="codigo" placeholder="Ejemplo: ABC123">
+    </div>
+
+    <div class="grupo">
+      <div class="label-standalone" style="text-align:center;">Escoja la Talla</div>
+      <div class="size-buttons">
+        <button onclick="selectSize(this,'Niña')">Niña</button>  
+        <button onclick="selectSize(this,'Juvenil')">Juvenil</button>
+        <button onclick="selectSize(this,'XS')">XS</button>
+        <button onclick="selectSize(this,'S')">S</button>
+        <button onclick="selectSize(this,'M')">M</button>
+        <button onclick="selectSize(this,'L')">L</button>
+        <button onclick="selectSize(this,'XL')">XL</button>
+        <button onclick="selectSize(this,'Plus')">Plus</button>
+        <button onclick="selectSize(this,'Plus 1X')">Plus 1X</button>
+        <button onclick="selectSize(this,'Plus 2X')">Plus 2X</button>
+        <button onclick="selectSize(this,'Plus 3X')">Plus 3X</button>
+      </div>
+    </div>
+
+    <div class="grupo" style="align-items:center;">
+      <div class="label-standalone">Marco</div>
       <label class="switch">
         <input type="checkbox" id="toggleMarco" checked>
         <span class="slider"></span>
       </label>
-    </label>
-  
-    <button id="generarFeedBtn">Generar FEED</button>
-    <button id="generarHistoriaBtn">Generar Historia</button>
-    <button id="descargarBtn">Descargar Imagen</button>
+    </div>
+
+    <div class="fila-actions">
+      <button id="generarAmbosBtn">Generar Feed + Historia</button>
+      <button id="descargarBtn">Descargar Imágenes</button>
+    </div>
   </div>
-  
-  <canvas id="canvas" width="1080" height="1080"></canvas>
+
+  <div id="contenedorCanvases">
+    <canvas id="canvasFeed" width="1080" height="1080"></canvas>
+    <canvas id="canvasHistoria" width="1080" height="1920"></canvas>
+  </div>
 </div>
 
 <script>
-/* --- LOGIN + inicio directo --- */
+/* Mostrar login inicialmente */
 document.getElementById("login").style.display = "block";
 
 function login(){
@@ -169,15 +299,13 @@ function login(){
 
   if(user === USUARIO && pass === CLAVE){
     document.getElementById("login").style.display = "none";
-    document.getElementById("app").style.display = "block"; // ir directo al generador
+    document.getElementById("app").style.display = "block";
   } else {
     error.style.display = "block";
   }
 }
 
-/* --- GENERADOR --- */
-const canvas = document.getElementById('canvas');
-const ctx = canvas.getContext('2d');
+/* Preview de imagen */
 const preview = document.getElementById("preview");
 const toggleMarco = document.getElementById("toggleMarco");
 let tallaSeleccionada = "";
@@ -194,113 +322,119 @@ document.getElementById('productoInput').addEventListener("change", e=>{
   }
 });
 
+/* Selección de talla */
 function selectSize(button,talla){
   document.querySelectorAll(".size-buttons button").forEach(b=>b.classList.remove("active"));
   button.classList.add("active");
   tallaSeleccionada = talla;
 }
 
-function dibujarProductoTexto(imgProducto){
-    const maxH = canvas.height * 0.90;
-    const maxW = canvas.width * 0.90;
-    let scale = Math.min(maxW / imgProducto.width, maxH / imgProducto.height);
+/* Dibujo de producto + textos */
+function dibujarProductoTexto(ctx, canvas, imgProducto){
+  const maxH = canvas.height * 0.87;
+  const maxW = canvas.width * 0.87;
+  let scale = Math.min(maxW / imgProducto.width, maxH / imgProducto.height);
 
-    if(canvas.width === 1080 && canvas.height === 1080){
-        scale *= 0.90;
-    }
+  if(canvas.width === 1080 && canvas.height === 1080){ scale *= 0.87; }
 
-    const w = imgProducto.width * scale;
-    const h = imgProducto.height * scale;
-    const x = (canvas.width - w) / 2;
-    const y = (canvas.height - h) / 2 - canvas.height * 0.05;
+  const w = imgProducto.width * scale;
+  const h = imgProducto.height * scale;
+  const x = (canvas.width - w) / 2;
+  const y = (canvas.height - h) / 2 - canvas.height * 0.05;
 
-    if(toggleMarco.checked){
-        const radius = 22, marco = 14;
-        ctx.save();
-        ctx.fillStyle = "#ffffff";
-        ctx.shadowColor = "rgba(0,0,0,0.2)";
-        ctx.shadowBlur = 26;
-        ctx.shadowOffsetX = 8;
-        ctx.shadowOffsetY = 8;
-        ctx.beginPath();
-        ctx.moveTo(x - marco + radius, y - marco);
-        ctx.lineTo(x + w + marco - radius, y - marco);
-        ctx.quadraticCurveTo(x + w + marco, y - marco, x + w + marco, y - marco + radius);
-        ctx.lineTo(x + w + marco, y + h + marco - radius);
-        ctx.quadraticCurveTo(x + w + marco, y + h + marco, x + w + marco - radius, y + h + marco);
-        ctx.lineTo(x - marco + radius, y + h + marco);
-        ctx.quadraticCurveTo(x - marco, y + h + marco, x - marco, y + h + marco - radius);
-        ctx.lineTo(x - marco, y - marco + radius);
-        ctx.quadraticCurveTo(x - marco, y - marco, x - marco + radius, y - marco);
-        ctx.closePath();
-        ctx.fill();
-        ctx.restore();
-    }
-
-    const radius = 22;
+  /* Marco blanco con sombra (opcional) */
+  if(toggleMarco.checked){
+    const radius = 22, marco = 14;
     ctx.save();
+    ctx.fillStyle = "#ffffff";
+    ctx.shadowColor = "rgba(0,0,0,0.2)";
+    ctx.shadowBlur = 26;
+    ctx.shadowOffsetX = 8;
+    ctx.shadowOffsetY = 8;
     ctx.beginPath();
-    ctx.moveTo(x + radius, y);
-    ctx.lineTo(x + w - radius, y);
-    ctx.quadraticCurveTo(x + w, y, x + w, y + radius);
-    ctx.lineTo(x + w, y + h - radius);
-    ctx.quadraticCurveTo(x + w, y + h, x + w - radius, y + h);
-    ctx.lineTo(x + radius, y + h);
-    ctx.quadraticCurveTo(x, y + h, x, y + h - radius);
-    ctx.lineTo(x, y + radius);
-    ctx.quadraticCurveTo(x, y, x + radius, y);
+    ctx.moveTo(x - marco + radius, y - marco);
+    ctx.lineTo(x + w + marco - radius, y - marco);
+    ctx.quadraticCurveTo(x + w + marco, y - marco, x + w + marco, y - marco + radius);
+    ctx.lineTo(x + w + marco, y + h + marco - radius);
+    ctx.quadraticCurveTo(x + w + marco, y + h + marco, x + w + marco - radius, y + h + marco);
+    ctx.lineTo(x - marco + radius, y + h + marco);
+    ctx.quadraticCurveTo(x - marco, y + h + marco, x - marco, y + h + marco - radius);
+    ctx.lineTo(x - marco, y - marco + radius);
+    ctx.quadraticCurveTo(x - marco, y - marco, x - marco + radius, y - marco);
     ctx.closePath();
-    ctx.clip();
-    ctx.drawImage(imgProducto, x, y, w, h);
+    ctx.fill();
     ctx.restore();
+  }
 
-    ctx.save();
-    const fontSize = Math.round(canvas.height * 0.06);
-    ctx.font = `800 ${fontSize}px Poppins`;
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-    const grad = ctx.createLinearGradient(0,0,canvas.width,0);
-    grad.addColorStop(0,"#ffaadf");
-    grad.addColorStop(1,"#e75480");
-    ctx.fillStyle = grad;
-    ctx.strokeStyle = "#ffffff";
-    ctx.lineWidth = 8;
-    ctx.shadowColor = "rgba(0,0,0,0.5)";
-    ctx.shadowBlur = 10;
-    ctx.shadowOffsetX = 4;
-    ctx.shadowOffsetY = 4;
-    const textoTalla = "Talla " + tallaSeleccionada;
-    ctx.strokeText(textoTalla, canvas.width/2, canvas.height*0.92);
-    ctx.fillText(textoTalla, canvas.width/2, canvas.height*0.92);
-    ctx.restore();
+  /* Recorte redondeado y producto */
+  const radius = 22;
+  ctx.save();
+  ctx.beginPath();
+  ctx.moveTo(x + radius, y);
+  ctx.lineTo(x + w - radius, y);
+  ctx.quadraticCurveTo(x + w, y, x + w, y + radius);
+  ctx.lineTo(x + w, y + h - radius);
+  ctx.quadraticCurveTo(x + w, y + h, x + w - radius, y + h);
+  ctx.lineTo(x + radius, y + h);
+  ctx.quadraticCurveTo(x, y + h, x, y + h - radius);
+  ctx.lineTo(x, y + radius);
+  ctx.quadraticCurveTo(x, y, x + radius, y);
+  ctx.closePath();
+  ctx.clip();
+  ctx.drawImage(imgProducto, x, y, w, h);
+  ctx.restore();
 
-    ctx.save();
-    ctx.font = `bold ${Math.round(canvas.height*0.012)}px Poppins`;
-    ctx.fillStyle = "pink";
-    ctx.textAlign = "left";
-    ctx.textBaseline = "top";
-    let codigoTexto = document.getElementById('codigo').value.trim();
-    ctx.fillText("Código", 30, 35);
-    ctx.fillText(codigoTexto, 30, 55);
-    ctx.restore();
+  /* Texto Talla con efecto */
+  ctx.save();
+  const fontSize = Math.round(canvas.height * 0.06);
+  ctx.font = `800 ${fontSize}px Poppins`;
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  const grad = ctx.createLinearGradient(0,0,canvas.width,0);
+  grad.addColorStop(0,"#ffaadf");
+  grad.addColorStop(1,"#e75480");
+  ctx.fillStyle = grad;
+  ctx.strokeStyle = "#ffffff";
+  ctx.lineWidth = 8;
+  ctx.shadowColor = "rgba(0,0,0,0.5)";
+  ctx.shadowBlur = 10;
+  ctx.shadowOffsetX = 4;
+  ctx.shadowOffsetY = 4;
+  const textoTalla = "Talla " + tallaSeleccionada;
+  ctx.strokeText(textoTalla, canvas.width/2, canvas.height*0.92);
+  ctx.fillText(textoTalla, canvas.width/2, canvas.height*0.92);
+  ctx.restore();
+
+  /* Código en esquina superior izquierda */
+  ctx.save();
+  ctx.font = `bold ${Math.round(canvas.height*0.012)}px Poppins`;
+  ctx.fillStyle = "pink";
+  ctx.textAlign = "left";
+  ctx.textBaseline = "top";
+  let codigoTexto = document.getElementById('codigo').value.trim();
+  ctx.fillText("Código", 30, 35);
+  ctx.fillText(codigoTexto, 30, 55);
+  ctx.restore();
 }
 
-function dibujarCanvas(imgProducto, fondoSrc, width, height){
-    canvas.width = width;
-    canvas.height = height;
-    const fondo = new Image();
-    fondo.src = fondoSrc;
-    fondo.onload = ()=> {
-        ctx.drawImage(fondo,0,0,canvas.width,canvas.height);
-        dibujarProductoTexto(imgProducto);
-    };
-    fondo.onerror = ()=> {
-        ctx.fillStyle = "#ffffff";
-        ctx.fillRect(0,0,canvas.width,canvas.height);
-        dibujarProductoTexto(imgProducto);
-    };
+/* Dibuja fondo + contenido */
+function dibujarCanvas(ctx, canvas, imgProducto, fondoSrc, width, height){
+  canvas.width = width;
+  canvas.height = height;
+  const fondo = new Image();
+  fondo.src = fondoSrc;
+  fondo.onload = ()=> {
+    ctx.drawImage(fondo,0,0,canvas.width,canvas.height);
+    dibujarProductoTexto(ctx, canvas, imgProducto);
+  };
+  fondo.onerror = ()=> {
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+    dibujarProductoTexto(ctx, canvas, imgProducto);
+  };
 }
 
+/* Validación */
 function validarCampos(){
   if(!document.getElementById('productoInput').files[0]) { alert("Suba una imagen del producto"); return false; }
   if(!tallaSeleccionada) { alert("Seleccione una talla"); return false; }
@@ -308,36 +442,52 @@ function validarCampos(){
   return true;
 }
 
-function generarPublicacion(fondoSrc, width, height) {
+/* Generar ambos (Feed + Historia) */
+function generarAmbos(){
   if(!validarCampos()) return;
   const fileInput = document.getElementById('productoInput');
   const reader = new FileReader();
   reader.onload = e=>{
     const img = new Image();
-    img.onload = ()=> dibujarCanvas(img, fondoSrc, width, height);
+    img.onload = ()=> {
+      dibujarCanvas(
+        document.getElementById('canvasFeed').getContext('2d'),
+        document.getElementById('canvasFeed'),
+        img, './fondo.png',1080,1080
+      );
+      dibujarCanvas(
+        document.getElementById('canvasHistoria').getContext('2d'),
+        document.getElementById('canvasHistoria'),
+        img, './fondo2.png',1080,1920
+      );
+    };
     img.src = e.target.result;
   };
   reader.readAsDataURL(fileInput.files[0]);
 }
 
-document.getElementById('generarFeedBtn')
-  .addEventListener('click', ()=> generarPublicacion('./fondo.png',1080,1080));
-
-document.getElementById('generarHistoriaBtn')
-  .addEventListener('click', ()=> generarPublicacion('./fondo2.png',1080,1920));
-
-document.getElementById('descargarBtn').addEventListener('click', ()=>{
+/* Descargar ambos PNG */
+function descargarAmbos(){
   if(!validarCampos()) return;
   const codigo = document.getElementById('codigo').value.trim();
   const fecha = new Date();
   const fechaStr = fecha.getFullYear() + ('0'+(fecha.getMonth()+1)).slice(-2) + ('0'+fecha.getDate()).slice(-2);
-  const nombreArchivo = `${tallaSeleccionada}+${codigo}+${fechaStr}.png`;
-  const link = document.createElement('a');
-  link.download = nombreArchivo;
-  link.href = canvas.toDataURL('image/png');
-  link.click();
-});
+
+  const linkFeed = document.createElement('a');
+  linkFeed.download = `FEED_${tallaSeleccionada}_${codigo}_${fechaStr}.png`;
+  linkFeed.href = document.getElementById('canvasFeed').toDataURL('image/png');
+  linkFeed.click();
+
+  const linkHistoria = document.createElement('a');
+  linkHistoria.download = `HISTORIA_${tallaSeleccionada}_${codigo}_${fechaStr}.png`;
+  linkHistoria.href = document.getElementById('canvasHistoria').toDataURL('image/png');
+  linkHistoria.click();
+}
+
+/* Listeners */
+document.getElementById('generarAmbosBtn').addEventListener('click', generarAmbos);
+document.getElementById('descargarBtn').addEventListener('click', descargarAmbos);
 </script>
+
 </body>
 </html>
-
