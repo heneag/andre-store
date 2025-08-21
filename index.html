@@ -781,8 +781,8 @@ function dibujarProductoTexto(ctx, canvas, imgProducto, zoom = 1){
   ctx.textAlign = "left";
   ctx.textBaseline = "top";
   let codigoTexto = document.getElementById('codigo').value.trim();
-  ctx.fillText("Código", 30, 35);
-  ctx.fillText(codigoTexto, 30, 55);
+  ctx.fillText("Código", 20, 25);
+  ctx.fillText(codigoTexto, 20, 35);
   ctx.restore();
 }
 
@@ -1231,4 +1231,5 @@ document.getElementById('descargarTodoBtn').addEventListener('click', descargarT
 </body>
 </html>
 .
+
 
