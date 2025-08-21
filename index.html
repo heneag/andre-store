@@ -688,24 +688,32 @@ function selectSize(button,talla){
   tallaSeleccionada = talla;
 }
 
-/* Dibujo de producto + textos */
 function dibujarProductoTexto(ctx, canvas, imgProducto, zoom = 1){
   const maxH = canvas.height * 0.90;
   const maxW = canvas.width * 0.90;
   let scale = Math.min(maxW / imgProducto.width, maxH / imgProducto.height);
-  
-  scale *= zoom; // Aplicar el zoom
 
-  if(canvas.width === 1080 && canvas.height === 1080){ scale *= 0.90; }
+  // Aplicar zoom extra para que se vea más grande
+  scale *= zoom * 1.05; // +5% de tamaño extra
+
+  // Ajuste específico para 1080x1080
+  if(canvas.width === 1080 && canvas.height === 1080){
+    scale *= 0.90;
+  }
 
   const w = imgProducto.width * scale;
   const h = imgProducto.height * scale;
+
   const x = (canvas.width - w) / 2;
-  const y = (canvas.height - h) / 2 - canvas.height * 0.06;
+  // Subir la imagen un poco más: aumentar el valor restado
+  const y = (canvas.height - h) / 2 - canvas.height * 0.10; // ahora sube más
+
+  ctx.drawImage(imgProducto, x, y, w, h);
+}
 
   /* Marco blanco con sombra (opcional) */
   if(toggleMarco.checked){
-    const radius = 22, marco = 14;
+    const radius = 20, marco = 12;
     ctx.save();
     ctx.fillStyle = "#ffffff";
     ctx.shadowColor = "rgba(0,0,0,0.2)";
@@ -1223,3 +1231,4 @@ document.getElementById('descargarTodoBtn').addEventListener('click', descargarT
 </body>
 </html>
 .
+
