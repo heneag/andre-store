@@ -459,17 +459,27 @@ tallaSeleccionada = talla;
 
 /* Dibujo de producto + textos */
 function dibujarProductoTexto(ctx, canvas, imgProducto){
-const maxH = canvas.height * 0.87;
-const maxW = canvas.width * 0.87;
+const maxH = canvas.height * 0.90;
+const maxW = canvas.width * 0.90;
 let scale = Math.min(maxW / imgProducto.width, maxH / imgProducto.height);
 
-if(canvas.width === 1080 && canvas.height === 1080){ scale *= 0.87; }
+if(canvas.width === 1080 && canvas.height === 1080){ scale *= 0.91; }
 
 const w = imgProducto.width * scale;
 const h = imgProducto.height * scale;
 const x = (canvas.width - w) / 2;
-const y = (canvas.height - h) / 2 - canvas.height * 0.05;
-
+// Ajuste diferente para feed vs historia
+let y;
+if (canvas.width === 1080 && canvas.height === 1080) {
+    // Para FEED: menos desplazamiento hacia arriba
+    y = (canvas.height - h) / 2 - canvas.height * 0.06;
+} else if (canvas.width === 1080 && canvas.height === 1920) {
+    // Para HISTORIA: centrado vertical con pequeño ajuste
+    y = (canvas.height - h) / 2 - canvas.height * 0.05;
+} else {
+    // Para otros casos (por si acaso)
+    y = (canvas.height - h) / 2;
+}
 /* Marco blanco con sombra (opcional) */
 if(toggleMarco.checked){
 const radius = 22, marco = 14;
