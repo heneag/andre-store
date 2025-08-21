@@ -209,25 +209,73 @@ input:checked + .slider:before { transform:translateX(32px); }
 
 /* Contenedor de canvases */
 #contenedorCanvases{ 
-    display:flex; 
-    gap:18px; 
-    flex-wrap:wrap; 
-    justify-content:center; 
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
     margin: 8px auto 24px auto; 
     width:100%; 
     max-width:1020px; 
 }
+
+.canvas-row {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    margin-bottom: 30px;
+}
+
+.canvas-row-title {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 800;
+    font-size: 1.5rem;
+    text-align: center;
+    margin-bottom: 15px;
+    padding: 8px 15px;
+    border-radius: 10px;
+    display: inline-block;
+    align-self: center;
+}
+
+.feed-title {
+    color: #54f983;
+    background-color: rgba(84, 249, 131, 0.1);
+}
+
+.historia-title {
+    color: #e98e1e;
+    background-color: rgba(233, 142, 30, 0.1);
+}
+
+.canvas-scroll-container {
+    width: 100%;
+    overflow-x: auto;
+    padding: 10px 0;
+}
+
+.canvas-horizontal-container {
+    display: flex;
+    gap: 20px;
+    padding: 10px;
+}
+
 .canvas-container {
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-bottom: 20px;
     background: rgba(255,255,255,0.8);
     padding: 15px;
     border-radius: 12px;
     box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    min-width: 350px;
 }
-canvas { border-radius:12px; border:2px solid #eee; box-shadow:0 6px 14px rgba(241,194,218,0.6); max-width:100%; height:auto; }
+
+canvas { 
+    border-radius:12px; 
+    border:2px solid #eee; 
+    box-shadow:0 6px 14px rgba(241,194,218,0.6); 
+    max-width:100%; 
+    height:auto; 
+}
 
 /* --- BOTONES DE ACCIÓN --- */
 .fila-actions { 
@@ -261,6 +309,10 @@ canvas { border-radius:12px; border:2px solid #eee; box-shadow:0 6px 14px rgba(2
 @media (max-width: 768px) {
     .fila-actions { flex-direction: column; }
     #generarAmbosBtn, #descargarTodoBtn, #descargarFeedBtn, #descargarHistoriaBtn { width:100%; flex:unset; margin-bottom:6px; }
+    
+    .canvas-container {
+        min-width: 300px;
+    }
 }
 .titulo-label span {
   font-weight: 800;        /* mismo peso que el h2 */
@@ -459,6 +511,40 @@ canvas { border-radius:12px; border:2px solid #eee; box-shadow:0 6px 14px rgba(2
     color: white;
     font-weight: 600;
     transition: width 0.3s ease;
+}
+
+/* --- BOTONES DE DESCARGA INDIVIDUAL --- */
+.download-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.download-btn {
+    padding: 8px 12px;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    color: white;
+    transition: all 0.2s;
+}
+
+.download-feed-btn {
+    background: var(--verde-principal);
+}
+
+.download-feed-btn:hover {
+    background: var(--verde-hover);
+}
+
+.download-historia-btn {
+    background: var(--coral-principal);
+}
+
+.download-historia-btn:hover {
+    background: var(--coral-hover);
 }
 </style>
 </head>
@@ -774,38 +860,67 @@ function generarCanvasesParaImagenes() {
   contenedorCanvases.innerHTML = '';
   generatedCanvases = [];
   
+  // Crear sección para Feeds
+  const feedRow = document.createElement('div');
+  feedRow.className = 'canvas-row';
+  
+  const feedTitle = document.createElement('div');
+  feedTitle.className = 'canvas-row-title feed-title';
+  feedTitle.innerText = 'Feeds';
+  feedRow.appendChild(feedTitle);
+  
+  const feedScrollContainer = document.createElement('div');
+  feedScrollContainer.className = 'canvas-scroll-container';
+  
+  const feedHorizontalContainer = document.createElement('div');
+  feedHorizontalContainer.className = 'canvas-horizontal-container';
+  feedScrollContainer.appendChild(feedHorizontalContainer);
+  feedRow.appendChild(feedScrollContainer);
+  
+  // Crear sección para Historias
+  const historiaRow = document.createElement('div');
+  historiaRow.className = 'canvas-row';
+  
+  const historiaTitle = document.createElement('div');
+  historiaTitle.className = 'canvas-row-title historia-title';
+  historiaTitle.innerText = 'Historias';
+  historiaRow.appendChild(historiaTitle);
+  
+  const historiaScrollContainer = document.createElement('div');
+  historiaScrollContainer.className = 'canvas-scroll-container';
+  
+  const historiaHorizontalContainer = document.createElement('div');
+  historiaHorizontalContainer.className = 'canvas-horizontal-container';
+  historiaScrollContainer.appendChild(historiaHorizontalContainer);
+  historiaRow.appendChild(historiaScrollContainer);
+  
+  // Añadir secciones al contenedor principal
+  contenedorCanvases.appendChild(feedRow);
+  contenedorCanvases.appendChild(historiaRow);
+  
+  // Generar cada imagen
   currentImages.forEach((img, index) => {
-    // Contenedor para esta imagen
-    const imgContainer = document.createElement('div');
-    imgContainer.className = 'canvas-container';
+    // Contenedor para esta imagen (Feed)
+    const feedContainer = document.createElement('div');
+    feedContainer.className = 'canvas-container';
     
     // Título para la imagen
-    const titulo = document.createElement('div');
-    titulo.style.fontFamily = "'Poppins', sans-serif";
-    titulo.style.color = "#54f983";
-    titulo.style.fontWeight = "400";
-    titulo.style.textAlign = "center";
-    titulo.style.fontSize = "1.2rem";
-    titulo.style.marginBottom = "10px";
-    titulo.innerText = `Imagen ${index + 1}`;
-    imgContainer.appendChild(titulo);
+    const tituloFeed = document.createElement('div');
+    tituloFeed.style.fontFamily = "'Poppins', sans-serif";
+    tituloFeed.style.color = "#54f983";
+    tituloFeed.style.fontWeight = "600";
+    tituloFeed.style.textAlign = "center";
+    tituloFeed.style.fontSize = "1rem";
+    tituloFeed.style.marginBottom = "10px";
+    tituloFeed.innerText = `Imagen ${index + 1}`;
+    feedContainer.appendChild(tituloFeed);
     
     // Canvas para Feed
-    const feedTitle = document.createElement('div');
-    feedTitle.style.fontFamily = "'Poppins', sans-serif";
-    feedTitle.style.color = "#54f983";
-    feedTitle.style.fontWeight = "400";
-    feedTitle.style.textAlign = "center";
-    feedTitle.style.fontSize = "1rem";
-    feedTitle.style.margin = "10px 0 5px 0";
-    feedTitle.innerText = "Feed";
-    imgContainer.appendChild(feedTitle);
-    
     const canvasFeed = document.createElement('canvas');
     canvasFeed.id = `canvasFeed-${index}`;
-    canvasFeed.width = 1080;
-    canvasFeed.height = 1080;
-    imgContainer.appendChild(canvasFeed);
+    canvasFeed.width = 400;
+    canvasFeed.height = 400;
+    feedContainer.appendChild(canvasFeed);
     
     // Controles de zoom para Feed
     const zoomContainerFeed = document.createElement('div');
@@ -830,32 +945,44 @@ function generarCanvasesParaImagenes() {
     zoomValueFeed.innerText = '100%';
     zoomContainerFeed.appendChild(zoomValueFeed);
     
-    imgContainer.appendChild(zoomContainerFeed);
+    feedContainer.appendChild(zoomContainerFeed);
     
-    // Botón de descarga para Feed
+    // Botones de descarga para Feed
+    const downloadButtons = document.createElement('div');
+    downloadButtons.className = 'download-buttons';
+    
     const downloadFeedBtn = document.createElement('button');
+    downloadFeedBtn.className = 'download-btn download-feed-btn';
     downloadFeedBtn.innerText = 'Descargar Feed';
-    downloadFeedBtn.style.background = 'var(--coral-principal)';
-    downloadFeedBtn.style.margin = '10px 0';
     downloadFeedBtn.onclick = () => descargarImagen(index, 'feed');
-    imgContainer.appendChild(downloadFeedBtn);
+    downloadButtons.appendChild(downloadFeedBtn);
+    
+    feedContainer.appendChild(downloadButtons);
+    
+    // Añadir feed al contenedor horizontal
+    feedHorizontalContainer.appendChild(feedContainer);
+    
+    // Contenedor para esta imagen (Historia)
+    const historiaContainer = document.createElement('div');
+    historiaContainer.className = 'canvas-container';
+    
+    // Título para la imagen
+    const tituloHistoria = document.createElement('div');
+    tituloHistoria.style.fontFamily = "'Poppins', sans-serif";
+    tituloHistoria.style.color = "#e98e1e";
+    tituloHistoria.style.fontWeight = "600";
+    tituloHistoria.style.textAlign = "center";
+    tituloHistoria.style.fontSize = "1rem";
+    tituloHistoria.style.marginBottom = "10px";
+    tituloHistoria.innerText = `Imagen ${index + 1}`;
+    historiaContainer.appendChild(tituloHistoria);
     
     // Canvas para Historia
-    const historiaTitle = document.createElement('div');
-    historiaTitle.style.fontFamily = "'Poppins', sans-serif";
-    historiaTitle.style.color = "#e98e1e";
-    historiaTitle.style.fontWeight = "400";
-    historiaTitle.style.textAlign = "center";
-    historiaTitle.style.fontSize = "1rem";
-    historiaTitle.style.margin = "15px 0 5px 0";
-    historiaTitle.innerText = "Historia";
-    imgContainer.appendChild(historiaTitle);
-    
     const canvasHistoria = document.createElement('canvas');
     canvasHistoria.id = `canvasHistoria-${index}`;
-    canvasHistoria.width = 1080;
-    canvasHistoria.height = 1920;
-    imgContainer.appendChild(canvasHistoria);
+    canvasHistoria.width = 225; // 9:16 aspect ratio
+    canvasHistoria.height = 400;
+    historiaContainer.appendChild(canvasHistoria);
     
     // Controles de zoom para Historia
     const zoomContainerHistoria = document.createElement('div');
@@ -880,18 +1007,22 @@ function generarCanvasesParaImagenes() {
     zoomValueHistoria.innerText = '100%';
     zoomContainerHistoria.appendChild(zoomValueHistoria);
     
-    imgContainer.appendChild(zoomContainerHistoria);
+    historiaContainer.appendChild(zoomContainerHistoria);
     
-    // Botón de descarga para Historia
+    // Botones de descarga para Historia
+    const downloadButtonsHistoria = document.createElement('div');
+    downloadButtonsHistoria.className = 'download-buttons';
+    
     const downloadHistoriaBtn = document.createElement('button');
+    downloadHistoriaBtn.className = 'download-btn download-historia-btn';
     downloadHistoriaBtn.innerText = 'Descargar Historia';
-    downloadHistoriaBtn.style.background = 'var(--coral-principal)';
-    downloadHistoriaBtn.style.margin = '10px 0';
     downloadHistoriaBtn.onclick = () => descargarImagen(index, 'historia');
-    imgContainer.appendChild(downloadHistoriaBtn);
+    downloadButtonsHistoria.appendChild(downloadHistoriaBtn);
     
-    // Añadir contenedor al DOM
-    contenedorCanvases.appendChild(imgContainer);
+    historiaContainer.appendChild(downloadButtonsHistoria);
+    
+    // Añadir historia al contenedor horizontal
+    historiaHorizontalContainer.appendChild(historiaContainer);
     
     // Dibujar los canvases
     dibujarCanvas(
@@ -899,8 +1030,8 @@ function generarCanvasesParaImagenes() {
       canvasFeed,
       img, 
       './fondo.png',
-      1080,
-      1080,
+      400,
+      400,
       1
     );
     
@@ -909,8 +1040,8 @@ function generarCanvasesParaImagenes() {
       canvasHistoria,
       img, 
       './fondo2.png',
-      1080,
-      1920,
+      225,
+      400,
       1
     );
     
@@ -933,8 +1064,8 @@ function generarCanvasesParaImagenes() {
         canvasFeed,
         img, 
         './fondo.png',
-        1080,
-        1080,
+        400,
+        400,
         zoom
       );
     });
@@ -949,8 +1080,8 @@ function generarCanvasesParaImagenes() {
         canvasHistoria,
         img, 
         './fondo2.png',
-        1080,
-        1920,
+        225,
+        400,
         zoom
       );
     });
@@ -968,17 +1099,52 @@ function descargarImagen(index, tipo){
   let canvas, nombre;
   
   if(tipo === 'feed') {
-    canvas = generatedCanvases[index].feed;
-    nombre = `FEED_${tallaSeleccionada}_${codigo}_${index+1}_${fechaStr}.png`;
+    canvas = document.createElement('canvas');
+    canvas.width = 1080;
+    canvas.height = 1080;
+    const ctx = canvas.getContext('2d');
+    dibujarCanvas(
+      ctx,
+      canvas,
+      currentImages[index], 
+      './fondo.png',
+      1080,
+      1080,
+      generatedCanvases[index].zoomFeed
+    );
+    
+    // Esperar a que se renderice
+    setTimeout(() => {
+      nombre = `FEED_${tallaSeleccionada}_${codigo}_${index+1}_${fechaStr}.png`;
+      const link = document.createElement('a');
+      link.download = nombre;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    }, 100);
   } else {
-    canvas = generatedCanvases[index].historia;
-    nombre = `HISTORIA_${tallaSeleccionada}_${codigo}_${index+1}_${fechaStr}.png`;
+    canvas = document.createElement('canvas');
+    canvas.width = 1080;
+    canvas.height = 1920;
+    const ctx = canvas.getContext('2d');
+    dibujarCanvas(
+      ctx,
+      canvas,
+      currentImages[index], 
+      './fondo2.png',
+      1080,
+      1920,
+      generatedCanvases[index].zoomHistoria
+    );
+    
+    // Esperar a que se renderice
+    setTimeout(() => {
+      nombre = `HISTORIA_${tallaSeleccionada}_${codigo}_${index+1}_${fechaStr}.png`;
+      const link = document.createElement('a');
+      link.download = nombre;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    }, 100);
   }
-  
-  const link = document.createElement('a');
-  link.download = nombre;
-  link.href = canvas.toDataURL('image/png');
-  link.click();
 }
 
 /* Descargar todas las imágenes */
@@ -989,29 +1155,58 @@ function descargarTodo(){
   const fecha = new Date();
   const fechaStr = fecha.getFullYear() + ('0'+(fecha.getMonth()+1)).slice(-2) + ('0'+fecha.getDate()).slice(-2);
   
-  // Crear un zip para todas las imágenes
-  alert("Esta función descargaría todas las imágenes en un archivo ZIP. En un entorno real, se necesitaría una librería como JSZip.");
-  
   // Implementación simplificada: descargar una por una
   for(let i = 0; i < generatedCanvases.length; i++) {
+    // Descargar feed
     setTimeout(() => {
-      // Descargar feed
-      const linkFeed = document.createElement('a');
-      linkFeed.download = `FEED_${tallaSeleccionada}_${codigo}_${i+1}_${fechaStr}.png`;
-      linkFeed.href = generatedCanvases[i].feed.toDataURL('image/png');
-      document.body.appendChild(linkFeed);
-      linkFeed.click();
-      document.body.removeChild(linkFeed);
+      const canvasFeed = document.createElement('canvas');
+      canvasFeed.width = 1080;
+      canvasFeed.height = 1080;
+      const ctxFeed = canvasFeed.getContext('2d');
+      dibujarCanvas(
+        ctxFeed,
+        canvasFeed,
+        currentImages[i], 
+        './fondo.png',
+        1080,
+        1080,
+        generatedCanvases[i].zoomFeed
+      );
       
-      // Descargar historia
-      const linkHistoria = document.createElement('a');
-      linkHistoria.download = `HISTORIA_${tallaSeleccionada}_${codigo}_${i+1}_${fechaStr}.png`;
-      linkHistoria.href = generatedCanvases[i].historia.toDataURL('image/png');
-      document.body.appendChild(linkHistoria);
-      linkHistoria.click();
-      document.body.removeChild(linkHistoria);
-    }, i * 500); // Espaciar las descargas para evitar problemas
+      setTimeout(() => {
+        const linkFeed = document.createElement('a');
+        linkFeed.download = `FEED_${tallaSeleccionada}_${codigo}_${i+1}_${fechaStr}.png`;
+        linkFeed.href = canvasFeed.toDataURL('image/png');
+        linkFeed.click();
+      }, 200);
+    }, i * 1000);
+    
+    // Descargar historia
+    setTimeout(() => {
+      const canvasHistoria = document.createElement('canvas');
+      canvasHistoria.width = 1080;
+      canvasHistoria.height = 1920;
+      const ctxHistoria = canvasHistoria.getContext('2d');
+      dibujarCanvas(
+        ctxHistoria,
+        canvasHistoria,
+        currentImages[i], 
+        './fondo2.png',
+        1080,
+        1920,
+        generatedCanvases[i].zoomHistoria
+      );
+      
+      setTimeout(() => {
+        const linkHistoria = document.createElement('a');
+        linkHistoria.download = `HISTORIA_${tallaSeleccionada}_${codigo}_${i+1}_${fechaStr}.png`;
+        linkHistoria.href = canvasHistoria.toDataURL('image/png');
+        linkHistoria.click();
+      }, 200);
+    }, i * 1000 + 500);
   }
+  
+  alert(`Se descargarán ${generatedCanvases.length * 2} imágenes. Esto puede tomar unos momentos.`);
 }
 
 /* Listeners */
